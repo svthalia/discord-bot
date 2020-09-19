@@ -4,6 +4,8 @@ aws_region = "eu-west-1"
 
 aws_profile = "thalia"
 
-name = "discord-bot-develop"
+prefix = "discord-bot-develop"
 
 stage = "develop"
+
+domain_name = "technicie.nl"

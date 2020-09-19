@@ -3,3 +3,4 @@ requirements.txt
 
 .terraform/
 builds/
+local.auto.tfvars
