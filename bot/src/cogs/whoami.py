@@ -10,7 +10,6 @@ from ddb import get_user_by_discord_id
 logger = get_logger(__name__)
 
 CONNECT_DOMAIN_NAME = f"{os.getenv('DOMAIN_NAME')}start-auth"
-MESSAGE_DELETE_AFTER = 5
 
 
 class WhoAmICog(commands.Cog, name="WhoAmI"):
@@ -25,17 +24,19 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
         user_data = get_user_by_discord_id(member.id)
 
         if user_data:
-            await ctx.send(
-                f"Your Thalia user id is {user_data['thalia_user_id']}",
-                delete_after=MESSAGE_DELETE_AFTER,
+            await member.send(
+                f"Your Thalia user id is {user_data['thalia_user_id']}"
             )
         else:
-            await ctx.send(
-                f"You have no associated Thalia user id",
-                delete_after=MESSAGE_DELETE_AFTER,
+            await member.send(
+                f"You have no associated Thalia user id"
             )
 
-        await ctx.message.delete(delay=MESSAGE_DELETE_AFTER)
+        try:
+            await ctx.message.delete()
+        except:
+            # ignore
+            pass
 
     @commands.command()
     async def connect(self, ctx, *, member: discord.Member = None):
@@ -45,14 +46,16 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
         user_data = get_user_by_discord_id(member.id)
 
         if user_data:
-            await ctx.send(
-                f"Your Discord tag has already been connected",
-                delete_after=MESSAGE_DELETE_AFTER,
+            await member.send(
+                f"Your Discord tag has already been connected"
             )
         else:
-            await ctx.send(
-                f"Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your account",
-                delete_after=MESSAGE_DELETE_AFTER,
+            await member.send(
+                f"Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your account"
             )
 
-        await ctx.message.delete(delay=MESSAGE_DELETE_AFTER)
+        try:
+            await ctx.message.delete()
+        except:
+            # ignore
+            pass
