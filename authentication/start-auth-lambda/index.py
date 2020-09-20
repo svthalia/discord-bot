@@ -1,7 +1,7 @@
 import requests
 import json
 import base64
-from common.thalia_oauth import get_oauth2_session, authorize_url
+from common.thalia_oauth import get_oauth2_session, AUTHORIZE_URL
 
 
 def lambda_handler(event, context):
@@ -17,7 +17,7 @@ def lambda_handler(event, context):
 
         cookie_value = base64.urlsafe_b64encode(discord_user.encode()).decode()
 
-        authorization_url, state = session.authorization_url(authorize_url)
+        authorization_url, state = session.authorization_url(AUTHORIZE_URL)
 
         return {
             "statusCode": 302,

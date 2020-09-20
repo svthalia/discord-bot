@@ -6,26 +6,33 @@ from discord.ext import commands
 from common.bot_logger import get_logger
 
 from common.ddb import get_user_by_discord_id
+from common.thalia_api import get_member_by_id
 
 logger = get_logger(__name__)
 
 CONNECT_DOMAIN_NAME = f"{os.getenv('DOMAIN_NAME')}start-auth"
+MESSAGE_DELETE_AFTER = 10
 
 
 class WhoAmICog(commands.Cog, name="WhoAmI"):
-    def __init__(self, bot):
+    def __init__(self, bot, thalia_session):
         self.bot = bot
+        self.thalia_session = thalia_session
 
     @commands.command()
     async def whoami(self, ctx, *, member: discord.Member = None):
         member = member or ctx.author
         logger.info(f"{member} ({member.id}) sent !whoami")
 
+        logger.info(f"Using token {self.thalia_session.token.get('access_token')}")
+
         user_data = get_user_by_discord_id(member.id)
 
         if user_data:
+            member_data = get_member_by_id(self.thalia_session, user_data["thalia_user_id"])
+
             await member.send(
-                f"Your Thalia user id is {user_data['thalia_user_id']}"
+                f"You are {member_data['display_name']}, Thalia member with user ID {user_data['thalia_user_id']}"
             )
         else:
             await member.send(
@@ -47,11 +54,13 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
 
         if user_data:
             await member.send(
-                f"Your Discord tag has already been connected"
+                f"Your Discord tag has already been connected",
+                delete_after=MESSAGE_DELETE_AFTER
             )
         else:
             await member.send(
-                f"Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your account"
+                f"Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your account",
+                delete_after=MESSAGE_DELETE_AFTER
             )
 
         try:

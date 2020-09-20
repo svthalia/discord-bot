@@ -2,8 +2,7 @@ import os
 import requests
 import json
 import base64
-from requests.auth import HTTPBasicAuth
-from common.thalia_oauth import token_url, client_id, client_secret, redirect_uri
+from common.thalia_oauth import exchange_code
 from common.thalia_api import get_authenticated_member
 from common.ddb import write_user
 
@@ -12,8 +11,8 @@ DISCORD_GUILD_ID = os.getenv("DISCORD_GUILD_ID")
 
 def lambda_handler(event, context):
     # try:
-    token_data, discord_user = get_token_data(event)
-    member_data = get_authenticated_member(token_data)
+    session = get_oauth_session(event)
+    member_data = get_authenticated_member(session)
     write_user(member_data["pk"], discord_user)
     # except Exception as e:
     #     return {"statusCode": 400, "body": json.dumps({"error": str(e)})}
@@ -27,7 +26,7 @@ def lambda_handler(event, context):
     }
 
 
-def get_token_data(event):
+def get_oauth_session(event):
     code = event["queryStringParameters"].get("code", None)
     state_key = event["queryStringParameters"].get("state", None)
 
@@ -58,15 +57,4 @@ def get_token_data(event):
 
     state_value = base64.urlsafe_b64decode(state_value.encode()).decode()
 
-    token_data = requests.post(
-        token_url,
-        data={
-            "client_id": client_id,
-            "redirect_uri": redirect_uri,
-            "code": code,
-            "grant_type": "authorization_code",
-        },
-        auth=HTTPBasicAuth(client_id, client_secret),
-    ).json()
-
-    return token_data, state_value
+    return exchange_code(code)
