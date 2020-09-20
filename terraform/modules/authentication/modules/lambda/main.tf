@@ -1,3 +1,7 @@
+locals {
+  root_directory = "${abspath(path.module)}/../../../../.."
+}
+
 module "lambda" {
   source = "terraform-aws-modules/lambda/aws"
 
@@ -8,15 +12,18 @@ module "lambda" {
   publish = true
 
   source_path = [
-    "${path.module}/../../../../common/src",
     {
-      path = "${path.module}/../../../src/${var.name}-lambda"
+      path             = "${local.root_directory}/common",
+      prefix_in_zip    = "common",
+    },
+    {
+      path = "${local.root_directory}/authentication/${var.name}-lambda"
       commands = [
         ":zip",
         "poetry export --format requirements.txt --without-hashes > requirements.txt",
         "cd `mktemp -d`",
-        "python3 -m pip install --target=. -r ${abspath(path.module)}/../../../src/${var.name}-lambda/requirements.txt",
-        "rm ${abspath(path.module)}/../../../src/${var.name}-lambda/requirements.txt",
+        "python3 -m pip install --target=. -r ${local.root_directory}/authentication/${var.name}-lambda/requirements.txt",
+        "rm ${local.root_directory}/authentication/${var.name}-lambda/requirements.txt",
         ":zip .",
       ],
       patterns = [

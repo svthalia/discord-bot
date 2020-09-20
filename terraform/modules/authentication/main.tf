@@ -1,6 +1,6 @@
-###################
-# HTTP API Gateway
-###################
+####################
+# HTTP API Gateway #
+####################
 
 module "api_gateway" {
   source = "terraform-aws-modules/apigateway-v2/aws"
@@ -38,9 +38,9 @@ module "api_gateway" {
   }
 }
 
-######
-# Route53
-######
+###########
+# Route53 #
+###########
 
 data "aws_route53_zone" "this" {
   name = var.domain_name
@@ -58,9 +58,9 @@ resource "aws_route53_record" "api" {
   }
 }
 
-######
-# ACM
-######
+#######
+# ACM #
+#######
 
 module "acm" {
   source  = "terraform-aws-modules/acm/aws"
@@ -71,9 +71,9 @@ module "acm" {
   subject_alternative_names = ["${var.prefix}.${var.domain_name}"]
 }
 
-######
-# Lambda
-######
+##########
+# Lambda #
+##########
 
 module "complete_auth_lambda" {
   source          = "./modules/lambda"
@@ -94,7 +94,10 @@ module "complete_auth_lambda" {
   policy_statements = {
     dynamodb = {
       effect    = "Allow",
-      actions   = ["dynamodb:PutItem"],
+      actions   = [
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem"
+        ],
       resources = ["${var.users_table_arn}"]
     }
   }

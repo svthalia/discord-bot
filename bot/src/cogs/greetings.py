@@ -3,7 +3,7 @@ import sys
 
 import discord
 from discord.ext import commands
-from bot_logger import get_logger
+from common.bot_logger import get_logger
 
 logger = get_logger(__name__)
 

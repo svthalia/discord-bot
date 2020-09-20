@@ -5,7 +5,7 @@ from os.path import dirname, join, abspath
 
 # Add common folder for execution
 if os.path.isdir("../common"):
-    sys.path.append(abspath(join(dirname(__file__), "../../common/src")))
+    sys.path.append(abspath(join(dirname(__file__), "../../")))
 
 from dotenv import load_dotenv
 
@@ -17,14 +17,12 @@ from discord.ext import commands
 from cogs.greetings import GreetingsCog
 from cogs.whoami import WhoAmICog
 
-from bot_logger import get_logger
+from common.bot_logger import get_logger
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-GUILD_ID = os.getenv("DISCORD_GUILD_ID")
 
 bot = commands.Bot(command_prefix="!")
 logger = get_logger(__name__)
-
 
 @bot.event
 async def on_ready():

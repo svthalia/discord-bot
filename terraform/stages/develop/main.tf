@@ -18,13 +18,13 @@ provider "aws" {
 }
 
 module "discord_bot_common" {
-  source = "../../../common/terraform"
+  source = "../../modules/common"
   prefix = var.prefix
   stage  = var.stage
 }
 
 module "discord_bot_authentication" {
-  source      = "../../../authentication/terraform"
+  source      = "../../modules/authentication"
   prefix      = var.prefix
   stage       = var.stage
   domain_name = var.domain_name
@@ -39,7 +39,7 @@ module "discord_bot_authentication" {
 }
 
 module "discord_bot_server" {
-  source = "../../../bot/terraform"
+  source = "../../modules/bot"
   prefix = var.prefix
   stage  = var.stage
 

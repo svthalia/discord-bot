@@ -1,7 +1,7 @@
 import requests
 import json
 import base64
-from thalia_oauth import get_oauth2_session, authorize_url
+from common.thalia_oauth import get_oauth2_session, authorize_url
 
 
 def lambda_handler(event, context):

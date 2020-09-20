@@ -1,6 +1,6 @@
 import requests
 import os
-from thalia_oauth import get_oauth2_session
+from common.thalia_oauth import get_oauth2_session
 
 THALIA_SERVER_URL = os.getenv("THALIA_SERVER_URL")
 

@@ -3,9 +3,9 @@ import requests
 import json
 import base64
 from requests.auth import HTTPBasicAuth
-from thalia_oauth import token_url, client_id, client_secret, redirect_uri
-from thalia_api import get_authenticated_member
-from ddb import write_user
+from common.thalia_oauth import token_url, client_id, client_secret, redirect_uri
+from common.thalia_api import get_authenticated_member
+from common.ddb import write_user
 
 DISCORD_GUILD_ID = os.getenv("DISCORD_GUILD_ID")
 

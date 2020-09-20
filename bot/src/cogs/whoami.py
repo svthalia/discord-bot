@@ -3,9 +3,9 @@ import sys
 
 import discord
 from discord.ext import commands
-from bot_logger import get_logger
+from common.bot_logger import get_logger
 
-from ddb import get_user_by_discord_id
+from common.ddb import get_user_by_discord_id
 
 logger = get_logger(__name__)
 

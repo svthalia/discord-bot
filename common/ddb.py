@@ -4,7 +4,7 @@ import os
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
-from bot_logger import get_logger
+from common.bot_logger import get_logger
 
 USERS_TABLE = os.getenv("USERS_TABLE")
 
@@ -15,10 +15,13 @@ logger = get_logger(__name__)
 
 
 def write_user(thalia_user_id, discord_user_id):
-    response = users_table.put_item(
-        Item={
-            "thalia_user_id": str(thalia_user_id),
-            "discord_user_id": str(discord_user_id),
+    response = users_table.update_item(
+        Key={
+            'thalia_user_id': str(thalia_user_id)
+        },
+        UpdateExpression="SET discord_user_id = :v",
+        ExpressionAttributeValues={
+            ':v': str(discord_user_id),
         }
     )
     return response
