@@ -10,7 +10,7 @@ variable "domain_name" {
   type = string
 }
 
-variable "discord_server_id" {
+variable "discord_guild_id" {
   type = string
 }
 
@@ -19,10 +19,6 @@ variable "thalia_server_url" {
 }
 
 variable "thalia_client_id" {
-  type = string
-}
-
-variable "thalia_client_secret" {
   type = string
 }
 

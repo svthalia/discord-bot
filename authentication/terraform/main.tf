@@ -86,7 +86,7 @@ module "complete_auth_lambda" {
     THALIA_CLIENT_ID     = var.thalia_client_id
     THALIA_CLIENT_SECRET = var.thalia_client_secret
     OAUTH_REDIRECT_URI   = "https://${var.prefix}.${var.domain_name}/complete-auth"
-    DISCORD_SERVER_ID    = var.discord_server_id
+    DISCORD_GUILD_ID     = var.discord_guild_id
     USERS_TABLE          = split("/", var.users_table_arn)[1]
   }
 

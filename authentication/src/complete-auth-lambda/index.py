@@ -7,7 +7,7 @@ from thalia_oauth import token_url, client_id, client_secret, redirect_uri
 from thalia_api import get_authenticated_member
 from ddb import write_user
 
-DISCORD_SERVER_ID = os.getenv("DISCORD_SERVER_ID")
+DISCORD_GUILD_ID = os.getenv("DISCORD_GUILD_ID")
 
 
 def lambda_handler(event, context):
@@ -22,7 +22,7 @@ def lambda_handler(event, context):
 
     return {
         "statusCode": 302,
-        "headers": {"Location": f"https://discord.com/channels/{DISCORD_SERVER_ID}"},
+        "headers": {"Location": f"https://discord.com/channels/{DISCORD_GUILD_ID}"},
         "body": json.dumps({}),
     }
 

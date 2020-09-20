@@ -11,7 +11,7 @@ variable "domain_name" {
   type = string
 }
 
-variable "discord_server_id" {
+variable "discord_guild_id" {
   type = string
 }
 
@@ -23,15 +23,27 @@ variable "discord_client_secret" {
   type = string
 }
 
+variable "discord_bot_token" {
+  type = string
+}
+
+variable "discord_bot_permissions" {
+  type = string
+}
+
 variable "thalia_server_url" {
   type = string
 }
 
-variable "thalia_client_id" {
+variable "thalia_auth_client_id" {
   type = string
 }
 
-variable "thalia_client_secret" {
+variable "thalia_bot_client_id" {
+  type = string
+}
+
+variable "thalia_bot_client_secret" {
   type = string
 }
 
