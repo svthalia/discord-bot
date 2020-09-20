@@ -18,7 +18,7 @@ def lambda_handler(event, context):
     # except Exception as e:
     #     return {"statusCode": 400, "body": json.dumps({"error": str(e)})}
 
-    # TODO: Probably start sync for the user here
+    # TODO: Probably start sync for the user here?
 
     return {
         "statusCode": 302,

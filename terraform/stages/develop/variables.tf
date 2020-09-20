@@ -39,6 +39,10 @@ variable "thalia_auth_client_id" {
   type = string
 }
 
+variable "thalia_auth_client_secret" {
+  type = string
+}
+
 variable "thalia_bot_client_id" {
   type = string
 }

@@ -5,9 +5,6 @@ from enum import IntEnum
 from logging.handlers import RotatingFileHandler
 from string import Formatter
 
-import discord
-from discord.ext import commands
-
 import _string
 
 try:
@@ -24,17 +21,6 @@ class PermissionLevel(IntEnum):
     ACTIVE_MEMBER = 2
     REGULAR = 1
     INVALID = -1
-
-
-class InvalidConfigError(commands.BadArgument):
-    def __init__(self, msg, *args):
-        super().__init__(msg, *args)
-        self.msg = msg
-
-    @property
-    def embed(self):
-        # Single reference of Color.red()
-        return discord.Embed(title="Error", description=self.msg, color=discord.Color.red())
 
 
 class BotLogger(logging.Logger):
@@ -80,7 +66,10 @@ class BotLogger(logging.Logger):
         if self.isEnabledFor(level):
             self._log(
                 level,
-                Fore.BLACK + Style.BRIGHT + "-------------------------" + Style.RESET_ALL,
+                Fore.BLACK
+                + Style.BRIGHT
+                + "-------------------------"
+                + Style.RESET_ALL,
                 [],
             )
 
@@ -92,7 +81,8 @@ loggers = set()
 ch = logging.StreamHandler(stream=sys.stdout)
 ch.setLevel(log_level)
 formatter = logging.Formatter(
-    "%(asctime)s %(name)s[%(lineno)d] - %(levelname)s: %(message)s", datefmt="%m/%d/%y %H:%M:%S"
+    "%(asctime)s %(name)s[%(lineno)d] - %(levelname)s: %(message)s",
+    datefmt="%m/%d/%y %H:%M:%S",
 )
 ch.setFormatter(formatter)
 

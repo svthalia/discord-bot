@@ -1,9 +1,8 @@
 module "users_table" {
   source = "terraform-aws-modules/dynamodb-table/aws"
 
-  name      = "${var.prefix}-users"
-  hash_key  = "thalia_user_id"
-  range_key = "discord_user_id"
+  name     = "${var.prefix}-users"
+  hash_key = "thalia_user_id"
 
   billing_mode   = "PROVISIONED"
   read_capacity  = 5
@@ -24,7 +23,6 @@ module "users_table" {
     {
       name            = "DiscordIndex"
       hash_key        = "discord_user_id"
-      range_key       = "thalia_user_id"
       projection_type = "ALL"
       write_capacity  = 5
       read_capacity   = 5

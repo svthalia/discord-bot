@@ -2,6 +2,8 @@ requirements.txt
 *.pyc
 
 .terraform/
+*.tfstate
+*.tfstate.backup
 builds/
 local.auto.tfvars
 .env

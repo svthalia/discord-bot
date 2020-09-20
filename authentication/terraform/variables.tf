@@ -22,6 +22,10 @@ variable "thalia_client_id" {
   type = string
 }
 
+variable "thalia_client_secret" {
+  type = string
+}
+
 variable "users_table_arn" {
   type = string
 }
