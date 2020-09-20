@@ -69,7 +69,10 @@ module "ec2_policy" {
         "dynamodb:BatchWriteItem"
       ],
       "Effect": "Allow",
-      "Resource": "${var.users_table_arn}"
+      "Resource": [
+        "${var.users_table_arn}",
+        "${var.users_table_arn}/*"
+      ]
     }
   ]
 }
@@ -82,6 +85,7 @@ module "ec2_role" {
 
   create_role             = true
   create_instance_profile = true
+  role_requires_mfa       = false
 
   role_name        = "${var.prefix}-ec2-role"
   role_description = "Role for the EC2 instance that runs the Discord bot"
@@ -158,21 +162,15 @@ module "ec2" {
     amazon-linux-extras enable python3.8
     yum install git python38 -y
 
-    curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py --output get-poetry.py
-    python3.8 get-poetry.py --version 1.0.9 -y
-    source $HOME/.poetry/env
+    useradd deploy
 
-    if [ ! -d "./app" ] 
-    then
-        git clone https://github.com/svthalia/discord-bot.git app
-    fi
-
-    cd app/bot
-
-    git fetch
-    git reset --hard origin/master
+    git clone https://github.com/svthalia/discord-bot.git /opt/app
+    chown -R deploy:deploy /opt/app 
+    cd /opt/app/bot/
 
     touch .env
+
+    echo "AWS_DEFAULT_REGION = \"${data.aws_region.current.name}\"" >> .env
 
     echo "DISCORD_GUILD_ID = \"${var.discord_guild_id}\"" >> .env
     echo "DISCORD_CLIENT_ID = \"${var.discord_client_id}\"" >> .env
@@ -181,13 +179,12 @@ module "ec2" {
     echo "DISCORD_BOT_TOKEN = \"${var.discord_bot_token}\"" >> .env
 
     echo "THALIA_CLIENT_ID = \"${var.thalia_client_id}\"" >> .env
-    echo "THALIA_CLIENT_SECRET = \"${var.thalia_client_secret}\" >> .env
+    echo "THALIA_CLIENT_SECRET = \"${var.thalia_client_secret}\"" >> .env
 
-    echo "USERS_TABLE = \"${split("/", var.users_table_arn)[1]}\" >> .env
-    echo "DOMAIN_NAME = \"${var.domain_name}\" >> .env
+    echo "USERS_TABLE = \"${split("/", var.users_table_arn)[1]}\"" >> .env
+    echo "DOMAIN_NAME = \"${var.domain_name}\"" >> .env
 
-    poetry install
-    poetry run python src/main.py
+    su deploy -c 'bash ../resources/deploy_ec2.sh'
   EOF
 
 
