@@ -9,7 +9,6 @@
           fail-fast: false
           matrix:
             python-version: [3.8]
-            poetry-version: [1.0.9]
             os: [ubuntu-18.04]
         runs-on: ${{ matrix.os }}
         steps:
@@ -18,11 +17,6 @@
           - uses: actions/setup-python@v2
             with:
               python-version: ${{ matrix.python-version }}
-
-          - name: Run image
-            uses: abatilo/actions-poetry@v2.0.0
-            with:
-              poetry-version: ${{ matrix.poetry-version }}
 
           - uses: actions/cache@v1
             with:
@@ -39,6 +33,35 @@
           - name: Run black
             run: |
               black .
+      pylint:
+        strategy:
+          fail-fast: false
+          matrix:
+            python-version: [3.8]
+            os: [ubuntu-18.04]
+        runs-on: ${{ matrix.os }}
+        steps:
+          - uses: actions/checkout@v2
+
+          - uses: actions/setup-python@v2
+            with:
+              python-version: ${{ matrix.python-version }}
+
+          - uses: actions/cache@v1
+            with:
+              path: ~/.cache/pip
+              key: ${{ runner.os }}-pip
+              restore-keys: |
+                ${{ runner.os }}-pip
+          
+          - name: Install dependencies
+            run: |
+              python -m pip install --upgrade pip
+              pip install pylint
+        
+          - name: Run pylint
+            run: |
+              pylint bot authentication common
       terraform:
         strategy:
           fail-fast: false
