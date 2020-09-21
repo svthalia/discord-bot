@@ -7,4 +7,4 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 python3.8 get-poetry.py --version 1.0.9 -y
 source $HOME/.poetry/env
 
-python3.8 ./run bot/main.py
+python3.8 ./run.py bot/main.py
