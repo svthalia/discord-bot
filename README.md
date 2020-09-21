@@ -1,5 +1,10 @@
-Thalia Bot
+Thalia Bot 
 ----------
+
+[![Linting](https://img.shields.io/github/workflow/status/svthalia/discord-bot/Linting?style=flat-square)](https://github.com/svthalia/concrexit/actions)
+[![Issues](https://img.shields.io/github/issues/svthalia/discord-bot?style=flat-square)](https://github.com/svthalia/concrexit/issues)
+[![License](https://img.shields.io/github/license/svthalia/discord-bot?style=flat-square)](https://github.com/svthalia/discord-bot/blob/master/LICENSE.md)
+[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg?style=flat-square)](https://github.com/psf/black)
 
 This repository contains the source code for a Discord bot that connects the users of a guild to a [https://github.com/svthalia/concrexit](Concrexit) backend and allows us to sync the guild with settings from such a backend.
 
