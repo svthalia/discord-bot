@@ -8,4 +8,4 @@ python3.8 get-poetry.py --version 1.0.9 -y
 source $HOME/.poetry/env
 
 poetry install
-./run bot/main.py
+python3.8 ./run bot/main.py
