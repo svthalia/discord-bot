@@ -173,9 +173,6 @@ module "ec2" {
     echo "AWS_DEFAULT_REGION = \"${data.aws_region.current.name}\"" >> .env
 
     echo "DISCORD_GUILD_ID = \"${var.discord_guild_id}\"" >> .env
-    echo "DISCORD_CLIENT_ID = \"${var.discord_client_id}\"" >> .env
-    echo "DISCORD_CLIENT_SECRET = \"${var.discord_client_secret}\"" >> .env
-    echo "DISCORD_BOT_PERMISSIONS = ${var.discord_bot_permissions}" >> .env
     echo "DISCORD_BOT_TOKEN = \"${var.discord_bot_token}\"" >> .env
 
     echo "THALIA_CLIENT_ID = \"${var.thalia_client_id}\"" >> .env

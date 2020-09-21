@@ -68,5 +68,5 @@ def get_event_state(event):
     return state_value
 
 
-def lambda_handler(event):
+def lambda_handler(event, _):
     return loop.run_until_complete(async_handle(event))

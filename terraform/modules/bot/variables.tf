@@ -10,19 +10,7 @@ variable "discord_guild_id" {
   type = string
 }
 
-variable "discord_client_id" {
-  type = string
-}
-
-variable "discord_client_secret" {
-  type = string
-}
-
 variable "discord_bot_token" {
-  type = string
-}
-
-variable "discord_bot_permissions" {
   type = string
 }
 

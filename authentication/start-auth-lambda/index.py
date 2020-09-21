@@ -44,5 +44,5 @@ async def async_handle(event):
         return {"statusCode": 400, "body": str(e)}
 
 
-def lambda_handler(event):
+def lambda_handler(event, _):
     return loop.run_until_complete(async_handle(event))
