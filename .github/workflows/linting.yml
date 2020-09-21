@@ -67,7 +67,6 @@
           fail-fast: false
           matrix:
             python-version: [3.8]
-            poetry-version: [1.0.9]
             os: [ubuntu-18.04]
         runs-on: ${{ matrix.os }}
         steps:

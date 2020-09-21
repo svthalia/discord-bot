@@ -48,8 +48,8 @@ module "discord_bot_server" {
   thalia_client_id     = var.thalia_bot_client_id
   thalia_client_secret = var.thalia_bot_client_secret
 
-  discord_guild_id        = var.discord_guild_id
-  discord_bot_token       = var.discord_bot_token
+  discord_guild_id  = var.discord_guild_id
+  discord_bot_token = var.discord_bot_token
 
   domain_name     = module.discord_bot_authentication.domain_name
   users_table_arn = module.discord_bot_common.users_table_arn
