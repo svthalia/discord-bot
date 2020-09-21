@@ -54,5 +54,9 @@ async def on_ready():
 async def on_error(event, *args, **kwargs):
     logger.warning(traceback.format_exc())
 
+try:
+    bot.run(TOKEN)
+except:
+    logger.exception("Something went wrong")
 
-bot.run(TOKEN)
+logger.warning("Bot stopped running")
