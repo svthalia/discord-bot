@@ -3,8 +3,9 @@ import sys
 
 import discord
 from discord.ext import commands
-from common.bot_logger import get_logger
 
+from common.thalia_oauth import get_backend_oauth_client
+from common.bot_logger import get_logger
 from common.ddb import get_user_by_discord_id
 from common.thalia_api import get_member_by_id
 
@@ -15,29 +16,32 @@ MESSAGE_DELETE_AFTER = 10
 
 
 class WhoAmICog(commands.Cog, name="WhoAmI"):
-    def __init__(self, bot, thalia_session):
+    def __init__(self, bot):
         self.bot = bot
-        self.thalia_session = thalia_session
+
+        logger.info("WhoAmI cog initialised")
 
     @commands.command()
     async def whoami(self, ctx, *, member: discord.Member = None):
         member = member or ctx.author
         logger.info(f"{member} ({member.id}) sent !whoami")
 
-        logger.info(f"Using token {self.thalia_session.token.get('access_token')}")
+        try:
+            user_data = await get_user_by_discord_id(member.id)
 
-        user_data = get_user_by_discord_id(member.id)
+            if user_data:
+                member_data = await get_member_by_id(
+                    self.bot.thalia_client, user_data["thalia_user_id"]
+                )
 
-        if user_data:
-            member_data = get_member_by_id(self.thalia_session, user_data["thalia_user_id"])
-
-            await member.send(
-                f"You are {member_data['display_name']}, Thalia member with user ID {user_data['thalia_user_id']}"
-            )
-        else:
-            await member.send(
-                f"You have no associated Thalia user id"
-            )
+                await member.send(
+                    f"You are {member_data['display_name']}, Thalia member with user ID {user_data['thalia_user_id']}"
+                )
+            else:
+                await member.send(f"You have no associated Thalia user id")
+        except Exception as e:
+            logger.exception("Error")
+            await member.send("Sorry, something went wrong.")
 
         try:
             await ctx.message.delete()
@@ -48,19 +52,19 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
     @commands.command()
     async def connect(self, ctx, *, member: discord.Member = None):
         member = member or ctx.author
-        logger.info(f"{member} ({member.id}) sent !whoami")
+        logger.info(f"{member} ({member.id}) sent !connect")
 
         user_data = get_user_by_discord_id(member.id)
 
         if user_data:
             await member.send(
                 f"Your Discord tag has already been connected",
-                delete_after=MESSAGE_DELETE_AFTER
+                delete_after=MESSAGE_DELETE_AFTER,
             )
         else:
             await member.send(
                 f"Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your account",
-                delete_after=MESSAGE_DELETE_AFTER
+                delete_after=MESSAGE_DELETE_AFTER,
             )
 
         try:
@@ -68,3 +72,6 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
         except:
             # ignore
             pass
+
+def setup(bot):
+    bot.add_cog(WhoAmICog(bot))

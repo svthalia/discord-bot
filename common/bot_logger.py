@@ -13,16 +13,6 @@ except ImportError:
     Fore = Style = type("Dummy", (object,), {"__getattr__": lambda self, item: ""})()
 
 
-class PermissionLevel(IntEnum):
-    OWNER = 5
-    ADMINISTRATOR = 4
-    ADMIN = 4
-    MODERATOR = 3
-    ACTIVE_MEMBER = 2
-    REGULAR = 1
-    INVALID = -1
-
-
 class BotLogger(logging.Logger):
     @staticmethod
     def _debug_(*msgs):
@@ -75,7 +65,7 @@ class BotLogger(logging.Logger):
 
 
 logging.setLoggerClass(BotLogger)
-log_level = logging.INFO
+log_level = logging.DEBUG
 loggers = set()
 
 ch = logging.StreamHandler(stream=sys.stdout)

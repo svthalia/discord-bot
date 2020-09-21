@@ -1,23 +1,36 @@
-import requests
+import asyncio
 import json
 import base64
-from common.thalia_oauth import get_oauth2_session, AUTHORIZE_URL
+import secrets
+from common.thalia_oauth import get_oauth2_client, AUTHORIZE_URL
 
 
-def lambda_handler(event, context):
+loop = asyncio.get_event_loop()
+
+
+async def async_handle(event):
     try:
-        session = get_oauth2_session()
+        client = get_oauth2_client()
 
         discord_user = event.get("queryStringParameters", {}).get("discord-user", None)
         if not discord_user:
             return {
                 "statusCode": 400,
-                "body": json.dumps({"error": "Missing discord user"}),
+                "body": "Error: Missing discord user",
             }
 
-        cookie_value = base64.urlsafe_b64encode(discord_user.encode()).decode()
+        random = secrets.token_bytes(64)
+        code_verifier = base64.b64encode(random, b"-_").decode().replace("=", "")
 
-        authorization_url, state = session.authorization_url(AUTHORIZE_URL)
+        cookie_value = base64.urlsafe_b64encode(
+            json.dumps(
+                {"discord_user": discord_user, "code_verifier": code_verifier}
+            ).encode()
+        ).decode()
+
+        authorization_url, state = client.create_authorization_url(
+            AUTHORIZE_URL, grant_type="authorization_code", code_verifier=code_verifier
+        )
 
         return {
             "statusCode": 302,
@@ -25,7 +38,11 @@ def lambda_handler(event, context):
                 "Location": authorization_url,
                 "Set-Cookie": f"{state}={cookie_value}; Secure; Max-Age: 600;",
             },
-            "body": json.dumps({}),
+            "body": f"You should now be redirect to {authorization_url}",
         }
     except Exception as e:
-        return {"statusCode": 400, "body": json.dumps({"error": str(e)})}
+        return {"statusCode": 400, "body": str(e)}
+
+
+def lambda_handler(event, context):
+    return loop.run_until_complete(async_handle(event))

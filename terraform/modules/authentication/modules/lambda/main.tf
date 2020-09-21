@@ -13,8 +13,8 @@ module "lambda" {
 
   source_path = [
     {
-      path             = "${local.root_directory}/common",
-      prefix_in_zip    = "common",
+      path          = "${local.root_directory}/common",
+      prefix_in_zip = "common",
     },
     {
       path = "${local.root_directory}/authentication/${var.name}-lambda"
@@ -29,7 +29,7 @@ module "lambda" {
       patterns = [
         "!poetry.lock",
         "!pyproject.toml",
-        ""
+        "!.venv/.*"
       ]
     }
   ]

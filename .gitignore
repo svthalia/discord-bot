@@ -7,4 +7,5 @@ requirements.txt
 builds/
 local.auto.tfvars
 .env
+.venv/
 __pycache__

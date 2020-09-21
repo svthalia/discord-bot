@@ -33,7 +33,8 @@ module "discord_bot_authentication" {
   thalia_client_id     = var.thalia_auth_client_id
   thalia_client_secret = var.thalia_auth_client_secret
 
-  discord_guild_id = var.discord_guild_id
+  discord_guild_id  = var.discord_guild_id
+  discord_bot_token = var.discord_bot_token
 
   users_table_arn = module.discord_bot_common.users_table_arn
 }

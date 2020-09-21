@@ -1,13 +1,14 @@
-import requests
 import os
-from common.thalia_oauth import get_oauth2_session
 
 THALIA_SERVER_URL = os.getenv("THALIA_SERVER_URL")
+THALIA_API_URL = f"{THALIA_SERVER_URL}api/v1"
 
 
-def get_authenticated_member(session):
-    return session.get(f"{THALIA_SERVER_URL}api/v1/members/me/").json()
+async def get_authenticated_member(client):
+    response = await client.get(f"{THALIA_API_URL}/members/me/")
+    return response.json()
 
 
-def get_member_by_id(session, user_id):
-    return session.get(f"{THALIA_SERVER_URL}api/v1/members/{user_id}/").json()
+async def get_member_by_id(client, user_id):
+    response = await client.get(f"{THALIA_API_URL}/members/{user_id}/")
+    return response.json()

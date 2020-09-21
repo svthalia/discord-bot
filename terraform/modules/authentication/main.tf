@@ -87,17 +87,18 @@ module "complete_auth_lambda" {
     THALIA_CLIENT_SECRET = var.thalia_client_secret
     OAUTH_REDIRECT_URI   = "https://${var.prefix}.${var.domain_name}/complete-auth"
     DISCORD_GUILD_ID     = var.discord_guild_id
+    DISCORD_BOT_TOKEN    = var.discord_bot_token
     USERS_TABLE          = split("/", var.users_table_arn)[1]
   }
 
   attach_policy_statements = true
   policy_statements = {
     dynamodb = {
-      effect    = "Allow",
-      actions   = [
+      effect = "Allow",
+      actions = [
         "dynamodb:PutItem",
         "dynamodb:UpdateItem"
-        ],
+      ],
       resources = ["${var.users_table_arn}"]
     }
   }

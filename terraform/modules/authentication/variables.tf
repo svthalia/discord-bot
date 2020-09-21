@@ -10,6 +10,10 @@ variable "domain_name" {
   type = string
 }
 
+variable "discord_bot_token" {
+  type = string
+}
+
 variable "discord_guild_id" {
   type = string
 }

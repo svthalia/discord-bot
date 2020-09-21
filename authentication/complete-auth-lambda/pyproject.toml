@@ -6,8 +6,10 @@ authors = []
 
 [tool.poetry.dependencies]
 python = "^3.8"
-requests-oauthlib = "^1.3.0"
-requests = "^2.24.0"
+authlib = "^0.14.3"
+httpx = "0.14.1"
+aioboto3 = "^8.0.5"
+"discord.py" = "^1.4.1"
 
 [tool.poetry.dev-dependencies]
 
