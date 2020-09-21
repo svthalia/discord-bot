@@ -1,7 +1,7 @@
 import logging
 import re
 import sys
-from enum import IntEnum
+
 from logging.handlers import RotatingFileHandler
 from string import Formatter
 

@@ -1,4 +1,3 @@
-import os
 import json
 import base64
 import asyncio
@@ -69,5 +68,5 @@ def get_event_state(event):
     return state_value
 
 
-def lambda_handler(event, context):
+def lambda_handler(event):
     return loop.run_until_complete(async_handle(event))

@@ -1,5 +1,5 @@
-from discord.ext import commands
 import asyncio
+from discord.ext import commands
 
 class OwnerCog(commands.Cog):
     def __init__(self, bot):
@@ -48,7 +48,7 @@ class OwnerCog(commands.Cog):
     async def version(self, ctx):
         try:
             proc = await asyncio.create_subprocess_exec("git", "rev-parse", "HEAD", stdout=asyncio.subprocess.PIPE)
-            stdout, stderr = await proc.communicate()
+            stdout, _ = await proc.communicate()
         except Exception as e:
             await ctx.send(f"**`ERROR:`** {type(e).__name__} - {e}")
         else:
@@ -61,7 +61,7 @@ class OwnerCog(commands.Cog):
             await asyncio.create_subprocess_exec("git", "fetch")
             await asyncio.create_subprocess_exec("git", "reset", "--hard", "origin/master")
             proc = await asyncio.create_subprocess_exec("git", "rev-parse", "HEAD", stdout=asyncio.subprocess.PIPE)
-            stdout, stderr = await proc.communicate()
+            stdout, _ = await proc.communicate()
         except Exception as e:
             await ctx.send(f"**`ERROR:`** {type(e).__name__} - {e}")
         else:

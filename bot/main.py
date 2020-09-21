@@ -1,3 +1,5 @@
+
+
 import os
 import sys
 import traceback
@@ -5,20 +7,17 @@ import traceback
 from os.path import dirname, join, abspath, isfile, isdir
 from os import listdir
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # Add common folder for execution
 if isdir("../common"):
     sys.path.append(abspath(join(dirname(__file__), "../../")))
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-import discord
-from discord.ext import commands
-
+# pylint: disable=wrong-import-position
 from core.bot import ThaliaBot
-
 from common.bot_logger import get_logger
+# pylint: enable=wrong-import-position
 
 COGS_MODULE = "cogs"
 
@@ -51,12 +50,8 @@ async def on_ready():
 
 
 @bot.event
-async def on_error(event, *args, **kwargs):
+async def on_error():
     logger.warning(traceback.format_exc())
 
-try:
-    bot.run(TOKEN)
-except:
-    logger.exception("Something went wrong")
-
+bot.run(TOKEN)
 logger.warning("Bot stopped running")

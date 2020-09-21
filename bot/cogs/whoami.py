@@ -1,10 +1,8 @@
 import os
-import sys
 
 import discord
 from discord.ext import commands
 
-from common.thalia_oauth import get_backend_oauth_client
 from common.bot_logger import get_logger
 from common.ddb import get_user_by_discord_id
 from common.thalia_api import get_member_by_id
@@ -38,8 +36,8 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
                     f"You are {member_data['display_name']}, Thalia member with user ID {user_data['thalia_user_id']}"
                 )
             else:
-                await member.send(f"You have no associated Thalia user id")
-        except Exception as e:
+                await member.send("You have no associated Thalia user id")
+        except:
             logger.exception("Error")
             await member.send("Sorry, something went wrong.")
 
@@ -62,7 +60,7 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
         )
         if user_data:
             await member.send(
-                f"Note: Your Discord tag has already been connected",
+                "Note: Your Discord tag has already been connected",
                 delete_after=MESSAGE_DELETE_AFTER,
             )
 

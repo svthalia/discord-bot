@@ -1,6 +1,7 @@
-from authlib.integrations.httpx_client import AsyncOAuth2Client
 
 import os
+
+from authlib.integrations.httpx_client import AsyncOAuth2Client
 
 from common.bot_logger import get_logger
 
@@ -15,7 +16,7 @@ TOKEN_URL = f'{os.getenv("THALIA_SERVER_URL")}user/oauth/token/'
 SCOPES = "read members:read"
 
 
-def _update_token(token, refresh_token=None, access_token=None):
+def _update_token():
     logger.info("Received new access token for API client")
 
 

@@ -10,3 +10,4 @@ local.auto.tfvars
 .venv/
 __pycache__
 .vscode/
+bot.egg-info/
