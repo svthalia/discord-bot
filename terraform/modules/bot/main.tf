@@ -177,6 +177,7 @@ module "ec2" {
 
     echo "THALIA_CLIENT_ID = \"${var.thalia_client_id}\"" >> .env
     echo "THALIA_CLIENT_SECRET = \"${var.thalia_client_secret}\"" >> .env
+    echo "THALIA_SERVER_URL = \"${var.thalia_server_url}\"" >> .env
 
     echo "USERS_TABLE = \"${split("/", var.users_table_arn)[1]}\"" >> .env
     echo "DOMAIN_NAME = \"${var.domain_name}\"" >> .env
