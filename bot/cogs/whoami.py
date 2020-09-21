@@ -54,16 +54,15 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
         member = member or ctx.author
         logger.info(f"{member} ({member.id}) sent !connect")
 
-        user_data = get_user_by_discord_id(member.id)
+        user_data = await get_user_by_discord_id(member.id)
 
+        await member.send(
+            f"Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your account",
+            delete_after=MESSAGE_DELETE_AFTER,
+        )
         if user_data:
             await member.send(
-                f"Your Discord tag has already been connected",
-                delete_after=MESSAGE_DELETE_AFTER,
-            )
-        else:
-            await member.send(
-                f"Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your account",
+                f"Note: Your Discord tag has already been connected",
                 delete_after=MESSAGE_DELETE_AFTER,
             )
 
@@ -72,6 +71,7 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
         except:
             # ignore
             pass
+
 
 def setup(bot):
     bot.add_cog(WhoAmICog(bot))

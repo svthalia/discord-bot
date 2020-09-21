@@ -166,7 +166,7 @@ module "ec2" {
 
     git clone https://github.com/svthalia/discord-bot.git /opt/app
     chown -R deploy:deploy /opt/app 
-    cd /opt/app/bot/
+    cd /opt/app/
 
     touch .env
 
@@ -184,7 +184,7 @@ module "ec2" {
     echo "USERS_TABLE = \"${split("/", var.users_table_arn)[1]}\"" >> .env
     echo "DOMAIN_NAME = \"${var.domain_name}\"" >> .env
 
-    su deploy -c 'bash ../resources/deploy_ec2.sh'
+    su deploy -c 'bash ./resources/deploy_ec2.sh'
   EOF
 
 

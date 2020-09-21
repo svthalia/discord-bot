@@ -20,7 +20,8 @@ module "lambda" {
       path = "${local.root_directory}/authentication/${var.name}-lambda"
       commands = [
         ":zip",
-        "poetry export --format requirements.txt --without-hashes > requirements.txt",
+        "cd ${local.root_directory}",
+        "poetry export --format requirements.txt --without-hashes > ${local.root_directory}/authentication/${var.name}-lambda/requirements.txt",
         "cd `mktemp -d`",
         "python3 -m pip install --target=. -r ${local.root_directory}/authentication/${var.name}-lambda/requirements.txt",
         "rm ${local.root_directory}/authentication/${var.name}-lambda/requirements.txt",

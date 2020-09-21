@@ -31,13 +31,17 @@ THALIA_SCOPES = "members:read read"
 bot = ThaliaBot(command_prefix="!")
 logger = get_logger(__name__)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cogs_dir = join(dirname(__file__), "cogs")
-    for extension in [f.replace('.py', '') for f in listdir(cogs_dir) if isfile(join(cogs_dir, f))]:
+    for extension in [
+        f.replace(".py", "") for f in listdir(cogs_dir) if isfile(join(cogs_dir, f))
+    ]:
         try:
             bot.load_extension(f"{COGS_MODULE}.{extension}")
         except Exception as e:
-            print(f'Failed to load extension {COGS_MODULE}.{extension}.', file=sys.stderr)
+            print(
+                f"Failed to load extension {COGS_MODULE}.{extension}.", file=sys.stderr
+            )
             traceback.print_exc()
 
 

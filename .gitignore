@@ -9,3 +9,4 @@ local.auto.tfvars
 .env
 .venv/
 __pycache__
+.vscode/
