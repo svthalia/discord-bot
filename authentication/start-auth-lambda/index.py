@@ -3,7 +3,7 @@ import json
 import base64
 import secrets
 from common.thalia_oauth import get_oauth2_client, AUTHORIZE_URL
-
+from common.discord_helper import DISCORD_GUILD_ID
 
 loop = asyncio.get_event_loop()
 
@@ -15,8 +15,9 @@ async def async_handle(event):
         discord_user = event.get("queryStringParameters", {}).get("discord-user", None)
         if not discord_user:
             return {
-                "statusCode": 400,
-                "body": "Error: Missing discord user",
+                "statusCode": 302,
+                "headers": {"Location": f"https://discord.com/channels/{DISCORD_GUILD_ID}"},
+                "body": "Missing discord user.",
             }
 
         random = secrets.token_bytes(64)

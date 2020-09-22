@@ -40,8 +40,12 @@ module "lambda" {
 
   allowed_triggers = {
     AllowExecutionFromAPIGateway = {
-      service = "apigateway"
-      arn     = var.api_gateway_arn
+      service    = "apigateway"
+      source_arn = "${var.api_gateway_arn}/*/*/*"
+    },
+    AllowExecutionFromAPIGatewayRoot = {
+      service    = "apigateway"
+      source_arn = "${var.api_gateway_arn}/*/*"
     }
   }
 
