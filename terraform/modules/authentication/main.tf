@@ -115,5 +115,6 @@ module "start_auth_lambda" {
     THALIA_CLIENT_ID     = var.thalia_client_id
     THALIA_CLIENT_SECRET = var.thalia_client_secret
     OAUTH_REDIRECT_URI   = "https://${var.prefix}.${var.domain_name}/complete-auth"
+    DISCORD_GUILD_ID     = var.discord_guild_id
   }
 }
