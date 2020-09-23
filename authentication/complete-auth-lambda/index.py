@@ -34,7 +34,8 @@ async def async_handle(event):
         try:
             discord_client = await get_client()
             guild = await discord_client.fetch_guild(DISCORD_GUILD_ID)
-            await sync_member(state["discord_user"], member_data, guild)
+            member = await guild.fetch_member(state["discord_user"])
+            await sync_member(member_data, member, guild)
         except Exception as e:
             logger.exception("Error during Discord sync")
 

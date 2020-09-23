@@ -6,6 +6,7 @@ from discord.ext import commands
 from common.bot_logger import get_logger
 from common.ddb import get_user_by_discord_id
 from common.thalia_api import get_member_by_id
+from common.discord_helper import sync_member, DISCORD_GUILD_ID
 
 logger = get_logger(__name__)
 
@@ -63,6 +64,36 @@ class WhoAmICog(commands.Cog, name="WhoAmI"):
                 "Note: Your Discord tag has already been connected",
                 delete_after=MESSAGE_DELETE_AFTER,
             )
+
+        try:
+            await ctx.message.delete()
+        except:
+            # ignore
+            pass
+
+    @commands.command()
+    async def sync(self, ctx, *, member: discord.Member = None):
+        member = member or ctx.author
+        logger.info(f"{member} ({member.id}) sent !sync")
+
+        try:
+            user_data = await get_user_by_discord_id(member.id)
+
+            if user_data:
+                member_data = await get_member_by_id(
+                    self.bot.thalia_client, user_data["thalia_user_id"]
+                )
+                
+                guild = discord.utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
+                discord_user = guild.get_member(member.id)
+
+                await sync_member(member_data, discord_user, guild)
+                await member.send("Your user data has been synced successfully")
+            else:
+                await member.send("You have no associated Thalia user id")
+        except:
+            logger.exception("Error")
+            await member.send("Sorry, something went wrong.")
 
         try:
             await ctx.message.delete()
