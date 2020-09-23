@@ -152,7 +152,7 @@ module "ec2" {
   instance_count = 1
   name           = "${var.prefix}-runner"
   ami            = data.aws_ami.amazon_linux_2.id
-  instance_type  = "t3a.nano"
+  instance_type  = "t4g.nano"
 
   user_data = <<-EOF
     #!/bin/bash -xe
