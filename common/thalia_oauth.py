@@ -12,8 +12,6 @@ REDIRECT_URI = os.getenv("OAUTH_REDIRECT_URI")
 AUTHORIZE_URL = f'{os.getenv("THALIA_SERVER_URL")}user/oauth/authorize/'
 TOKEN_URL = f'{os.getenv("THALIA_SERVER_URL")}user/oauth/token/'
 
-SCOPES = "read members:read"
-
 
 def _update_token():
     logger.info("Received new access token for API client")
@@ -23,7 +21,7 @@ def get_oauth2_client(token=None):
     return AsyncOAuth2Client(
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
-        scope=SCOPES,
+        scope="members:read",
         redirect_uri=REDIRECT_URI,
         code_challenge_method="S256",
         token=token,
@@ -35,7 +33,7 @@ async def get_backend_oauth_client():
     client = AsyncOAuth2Client(
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
-        scope=SCOPES,
+        scope="read members:read",
         redirect_uri=REDIRECT_URI,
         code_challenge_method="S256",
         update_token=_update_token,
