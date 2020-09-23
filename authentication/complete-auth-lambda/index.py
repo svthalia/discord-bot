@@ -25,16 +25,17 @@ async def async_handle(event):
             grant_type="authorization_code",
         )
 
-        member_data = await get_authenticated_member(client)
+        thalia_data = await get_authenticated_member(client)
 
-        logger.debug(f"Member data: {member_data}")
+        logger.debug(f"Member data: {thalia_data}")
 
-        await write_user(member_data["pk"], state["discord_user"])
+        await write_user(thalia_data["pk"], state["discord_user"])
 
         try:
             discord_client = await get_client()
             guild = await discord_client.fetch_guild(DISCORD_GUILD_ID)
-            await sync_member(state["discord_user"], member_data, guild)
+            member = await guild.fetch_member(state["discord_user"])
+            await sync_member(thalia_data, member, guild)
         except Exception as e:
             logger.exception("Error during Discord sync")
 

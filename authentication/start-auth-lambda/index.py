@@ -16,7 +16,9 @@ async def async_handle(event):
         if not discord_user:
             return {
                 "statusCode": 302,
-                "headers": {"Location": f"https://discord.com/channels/{DISCORD_GUILD_ID}"},
+                "headers": {
+                    "Location": f"https://discord.com/channels/{DISCORD_GUILD_ID}"
+                },
                 "body": "Missing discord user.",
             }
 

@@ -1,4 +1,3 @@
-
 import os
 
 from authlib.integrations.httpx_client import AsyncOAuth2Client

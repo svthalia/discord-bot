@@ -1,5 +1,3 @@
-
-
 import os
 import sys
 import traceback
@@ -8,15 +6,18 @@ from os.path import dirname, join, abspath, isfile, isdir
 from os import listdir
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Add common folder for execution
 if isdir("../common"):
     sys.path.append(abspath(join(dirname(__file__), "../../")))
 
+
 # pylint: disable=wrong-import-position
 from core.bot import ThaliaBot
 from common.bot_logger import get_logger
+
 # pylint: enable=wrong-import-position
 
 COGS_MODULE = "cogs"
@@ -49,9 +50,14 @@ async def on_ready():
     logger.info(f"{bot.user.name} has connected to Discord!")
 
 
+# pylint: disable=unused-argument
 @bot.event
-async def on_error():
+async def on_error(event_name):
     logger.warning(traceback.format_exc())
+
+
+# pylint: enable=unused-argument
+
 
 bot.run(TOKEN)
 logger.warning("Bot stopped running")
