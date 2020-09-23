@@ -12,6 +12,10 @@ data "http" "myip" {
 
 data "aws_subnet_ids" "all" {
   vpc_id = module.vpc.vpc_id
+
+  depends_on = [
+    module.vpc
+  ]
 }
 
 data "aws_ami" "amazon_linux_2" {
@@ -20,7 +24,7 @@ data "aws_ami" "amazon_linux_2" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-ebs"]
+    values = ["amzn2-ami-hvm-*-arm64-gp2"]
   }
 }
 
@@ -160,7 +164,7 @@ module "ec2" {
 
     yum update -y
     amazon-linux-extras enable python3.8
-    yum install git python38 -y
+    yum install git python38 python38-devel gcc -y
 
     useradd deploy
 
