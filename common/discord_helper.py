@@ -28,7 +28,7 @@ def _calculate_roles(user_data):
     roles = set()
 
     if user_data["membership_type"]:
-        roles.add(user_data["membership_type"])
+        roles.add(user_data["membership_type"].capitalize())
 
     for achievement in active_achievements:
         if "Board" not in achievement["name"]:

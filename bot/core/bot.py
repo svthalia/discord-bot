@@ -6,6 +6,7 @@ class ThaliaBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.thalia_client = None
+        self.help_command = commands.DefaultHelpCommand(dm_help=True)
 
     async def connect(self, *args, **kwargs):
         self.thalia_client = await get_backend_oauth_client()
