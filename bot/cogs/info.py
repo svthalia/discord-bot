@@ -1,5 +1,6 @@
 import asyncio
 from discord.ext import commands
+from discord import Activity, ActivityType
 
 from common.bot_logger import get_logger
 
@@ -9,8 +10,14 @@ logger = get_logger(__name__)
 class InfoCog(commands.Cog, name="Bot Information"):
     def __init__(self, bot):
         self.bot = bot
-
         logger.info("Info cog initialised")
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        await self.bot.change_presence(
+            activity=Activity(type=ActivityType.watching, name="!help for docs"),
+            status="!help for docs",
+        )
 
     @commands.group(
         name="info",

@@ -65,7 +65,7 @@ class BotLogger(logging.Logger):
 
 
 logging.setLoggerClass(BotLogger)
-log_level = logging.DEBUG
+log_level = logging.INFO
 loggers = set()
 
 ch = logging.StreamHandler(stream=sys.stdout)

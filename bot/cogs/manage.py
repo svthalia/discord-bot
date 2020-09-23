@@ -6,12 +6,17 @@ from common.bot_logger import get_logger
 logger = get_logger(__name__)
 
 
-class OwnerCog(commands.Cog):
+class ManageCog(commands.Cog, name="Bot management"):
     def __init__(self, bot):
         self.bot = bot
+        logger.info("Manage cog initialised")
 
-    # Hidden means it won't show up on the default help.
-    @commands.command(hidden=True)
+    @commands.group(name="manage", hidden=True, invoke_without_command=True)
+    async def manage(self, ctx):
+        await ctx.send("No subcommand was found!")
+        await ctx.send_help(self.manage)
+
+    @manage.command(help="Load a module from the cogs in the repository")
     @commands.is_owner()
     async def load(self, ctx, *, cog: str):
         """Command which Loads a Module"""
@@ -23,7 +28,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send("**`SUCCESS`**")
 
-    @commands.command(hidden=True)
+    @manage.command(help="Unload a module from the cogs in the repository")
     @commands.is_owner()
     async def unload(self, ctx, *, cog: str):
         """Command which Unloads a Module"""
@@ -35,7 +40,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send("**`SUCCESS`**")
 
-    @commands.command(hidden=True)
+    @manage.command(help="Reload a module from the cogs in the repository")
     @commands.is_owner()
     async def reload(self, ctx, *, cog: str):
         """Command which Reloads a Module"""
@@ -48,7 +53,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send("**`SUCCESS`**")
 
-    @commands.command(hidden=True)
+    @manage.command(help="git fetch && git reset --hard origin/master")
     @commands.is_owner()
     async def pull(self, ctx):
         try:
@@ -65,7 +70,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send(f"Current git revision is {stdout.decode()}")
 
-    @commands.command(hidden=True)
+    @manage.command(help="Closes the current version of the bot")
     @commands.is_owner()
     async def restart(self, ctx):
         try:
@@ -77,4 +82,4 @@ class OwnerCog(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(OwnerCog(bot))
+    bot.add_cog(ManageCog(bot))

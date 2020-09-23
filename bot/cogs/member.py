@@ -11,13 +11,11 @@ from common.discord_helper import DISCORD_GUILD_ID, sync_member
 logger = get_logger(__name__)
 
 CONNECT_DOMAIN_NAME = f"{os.getenv('DOMAIN_NAME')}start-auth"
-MESSAGE_DELETE_AFTER = 10
 
 
 class MemberCog(commands.Cog, name="Member management"):
     def __init__(self, bot):
         self.bot = bot
-
         logger.info("Member cog initialised")
 
     @commands.group(
@@ -27,11 +25,10 @@ class MemberCog(commands.Cog, name="Member management"):
     )
     async def member(self, ctx):
         await ctx.send("No subcommand was found!")
+        await ctx.send_help(self.member)
 
     @member.command(help="Outputs your current display name and user id")
     async def whoami(self, ctx):
-        logger.info(f"{ctx.author} ({ctx.author.id}) sent !member whoami")
-
         try:
             user_data = await get_user_by_discord_id(ctx.author.id)
 
@@ -57,19 +54,13 @@ class MemberCog(commands.Cog, name="Member management"):
 
     @member.command(help="Gives info on how to connect your Discord and Thalia account")
     async def connect(self, ctx):
-        logger.info(f"{ctx.author} ({ctx.author.id}) sent !connect")
-
         user_data = await get_user_by_discord_id(ctx.author.id)
 
         await ctx.author.send(
-            f"Visit {CONNECT_DOMAIN_NAME}?discord-user={ctx.author.id} to connect your account",
-            delete_after=MESSAGE_DELETE_AFTER,
+            f"Visit {CONNECT_DOMAIN_NAME}?discord-user={ctx.author.id} to connect your Thalia account"
         )
         if user_data:
-            await ctx.author.send(
-                "Note: Your Discord tag has already been connected",
-                delete_after=MESSAGE_DELETE_AFTER,
-            )
+            await ctx.author.send("Note: Your Discord tag has already been connected")
 
         try:
             await ctx.message.delete()
@@ -79,8 +70,6 @@ class MemberCog(commands.Cog, name="Member management"):
 
     @member.command(help="Triggers a sync of your member information")
     async def sync(self, ctx):
-        logger.info(f"{ctx.author} ({ctx.author.id}) sent !sync")
-
         try:
             user_data = await get_user_by_discord_id(ctx.author.id)
 
