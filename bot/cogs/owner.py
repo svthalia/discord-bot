@@ -1,12 +1,17 @@
 import asyncio
 from discord.ext import commands
 
+from common.bot_logger import get_logger
+
+logger = get_logger(__name__)
+
 class OwnerCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # Hidden means it won't show up on the default help.
-    @commands.command(name="load", hidden=True)
+        logger.info("Owner cog initialised")
+
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def load(self, ctx, *, cog: str):
         """Command which Loads a Module"""
@@ -18,7 +23,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send("**`SUCCESS`**")
 
-    @commands.command(name="unload", hidden=True)
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def unload(self, ctx, *, cog: str):
         """Command which Unloads a Module"""
@@ -30,7 +35,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send("**`SUCCESS`**")
 
-    @commands.command(name="reload", hidden=True)
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def reload(self, ctx, *, cog: str):
         """Command which Reloads a Module"""
@@ -43,7 +48,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send("**`SUCCESS`**")
 
-    @commands.command(name="version", hidden=True)
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def version(self, ctx):
         try:
@@ -54,7 +59,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send(f"**`SUCCESS`**: Current git revision is {stdout.decode()}")
 
-    @commands.command(name="pull", hidden=True)
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def pull(self, ctx):
         try:
@@ -67,7 +72,7 @@ class OwnerCog(commands.Cog):
         else:
             await ctx.send(f"**`SUCCESS`**: Current git revision is {stdout.decode()}")
 
-    @commands.command(name="restart", hidden=True)
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def restart(self, ctx):
         try:
