@@ -1,26 +1,26 @@
 ---
 name: Command request
+title: "Add new command: [NAME]"
 about: A new command should be added
-labels: 'command, priority: low'
+labels: 'feature, command, priority: low'
 
 ---
 
-### Command [new]
-#### Name
+### Name
 
-how the command is invoked `[prefix] [command] [args]`
+How the command is invoked `[prefix] [command] [args]`?
 
-####Description
+### Description
 
-what does the command do, what should `[prefix] help [command]` return to the user
+What does the command do and what should `[prefix] help [command]` return to the user?
 
-####Use cases
+### Use cases
 
-How do you expect the command will be used
+How do you expect the command will be used?
 
-####Permissions
+### Permissions
 
-Who has acces to the command
+Who should have access to the command?
 
 ### Additional context
 Add any other context about the command here.
