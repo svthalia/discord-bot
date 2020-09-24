@@ -16,9 +16,11 @@ if isdir("../common"):
 
 # pylint: disable=wrong-import-position
 from core.bot import ThaliaBot
-from common.bot_logger import get_logger
+from common.bot_logger import get_logger, configure_logging
 
 # pylint: enable=wrong-import-position
+
+configure_logging("bot.log")
 
 COGS_MODULE = "cogs"
 

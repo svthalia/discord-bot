@@ -106,7 +106,7 @@ def configure_logging(name, level=None):
         datefmt="%Y-%m-%d %H:%M:%S",
     )
     ch_debug.setFormatter(formatter_debug)
-    ch_debug.setLevel(logging.DEBUG)
+    ch_debug.setLevel(logging.WARNING)
 
     if level is not None:
         log_level = level

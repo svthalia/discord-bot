@@ -2,6 +2,10 @@
 # HTTP API Gateway #
 ####################
 
+resource "aws_cloudwatch_log_group" "logs" {
+  name = "${var.prefix}-auth-api"
+}
+
 module "api_gateway" {
   source = "terraform-aws-modules/apigateway-v2/aws"
 
@@ -16,6 +20,9 @@ module "api_gateway" {
 
   domain_name                 = "${var.prefix}.${var.domain_name}"
   domain_name_certificate_arn = module.acm.this_acm_certificate_arn
+
+  default_stage_access_log_destination_arn = aws_cloudwatch_log_group.logs.arn
+  default_stage_access_log_format          = "$context.identity.sourceIp - $context.requestTime - $context.routeKey $context.protocol - $context.status $context.responseLength $context.requestId $context.integrationErrorMessage"
 
   integrations = {
     "GET /start-auth" = {
