@@ -8,6 +8,8 @@ module "lambda" {
   function_name = "${var.prefix}-${var.name}"
   handler       = "index.lambda_handler"
   runtime       = "python3.8"
+  memory_size   = 256
+  timeout       = 30
 
   publish = true
 
