@@ -1,6 +1,8 @@
 requirements.txt
 *.pyc
+.idea
 
+bot.log
 .terraform/
 *.tfstate
 *.tfstate.backup
