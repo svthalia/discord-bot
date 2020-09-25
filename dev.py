@@ -32,11 +32,12 @@ path = "."
 # How often we check the filesystem for changes (in seconds)
 wait = 1
 
-# The process to auto reload
+# The process to autoreload
 process = subprocess.Popen("poetry run python " + command, shell=True)
 
 # The current maximum file modified time under the watched directory
 last_mtime = max(file_times(path))
+
 
 while True:
     max_mtime = max(file_times(path))

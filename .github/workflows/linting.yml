@@ -61,7 +61,7 @@
         
           - name: Run pylint
             run: |
-              pylint dev.py run.py bot authentication common
+              pylint bot authentication common
       terraform:
         strategy:
           fail-fast: false
