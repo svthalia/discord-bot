@@ -18,6 +18,7 @@ async def get_client():
 def _calculate_roles(user_data):
     is_committee_chair = False
     is_society_chair = False
+    is_committee_member = False
 
     active_achievements = filter(
         lambda x: x["latest"] is None and x["active"], user_data["achievements"]
@@ -32,6 +33,7 @@ def _calculate_roles(user_data):
 
     for achievement in active_achievements:
         if "Board" not in achievement["name"]:
+            is_committee_member = True
             is_committee_chair = achievement["periods"][-1]["chair"]
         roles.add(achievement["name"])
 
@@ -43,6 +45,8 @@ def _calculate_roles(user_data):
         roles.add("Committee Chair")
     if is_society_chair:
         roles.add("Society Chair")
+    if is_committee_member:
+        roles.add("Committee Member")
 
     return roles
 

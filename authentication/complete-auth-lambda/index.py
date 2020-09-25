@@ -36,6 +36,7 @@ async def async_handle(event):
             guild = await discord_client.fetch_guild(DISCORD_GUILD_ID)
             member = await guild.fetch_member(state["discord_user"])
             await sync_member(thalia_data, member, guild)
+            await member.send(f"Your account has been connected. Welcome to the Thalia Discord {thalia_data['display_name']}!")
         except Exception as e:
             logger.exception("Error during Discord sync")
 
