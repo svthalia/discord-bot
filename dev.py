@@ -8,16 +8,18 @@ def file_filter(name):
     return (not name.startswith(".")) and (not name.endswith(".swp"))
 
 
-def file_times(path):
-    for top_level in filter(file_filter, os.listdir(path)):
+def file_times(filepath):
+    for top_level in filter(file_filter, os.listdir(filepath)):
+        # pylint: disable=unused-variable
         for root, dirs, files in os.walk(top_level):
             for file in filter(file_filter, files):
                 yield os.stat(os.path.join(root, file)).st_mtime
+        # pylint: enable=unused-variable
 
 
-def print_stdout(process):
-    stdout = process.stdout
-    if stdout != None:
+def print_stdout(current_process):
+    stdout = current_process.stdout
+    if stdout is not None:
         print(stdout)
 
 
