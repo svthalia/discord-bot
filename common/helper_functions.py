@@ -8,7 +8,7 @@ async def reply_and_delete(ctx, reply: str):
         await ctx.author.send(reply)
         await ctx.message.delete()
     except:
-        logger.error(
+        logger.warning(
             "Could not reply to/remove old message: 'ctx.message.content=%s' by user: 'ctx.author=%s'",
             ctx.message.content,
             ctx.author,
