@@ -7,6 +7,7 @@ from common.bot_logger import get_logger
 from common.ddb import get_user_by_discord_id
 from common.thalia_api import get_member_by_id
 from common.discord_helper import DISCORD_GUILD_ID, sync_member
+from common.helper_functions import reply_and_delete
 
 logger = get_logger(__name__)
 
@@ -37,20 +38,18 @@ class MemberCog(commands.Cog, name="Member management"):
                     self.bot.thalia_client, user_data["thalia_user_id"]
                 )
 
-                await ctx.author.send(
-                    f"You are {member_data['display_name']}, Thalia member with user ID {user_data['thalia_user_id']}"
+                await reply_and_delete(
+                    ctx,
+                    f"You are {member_data['display_name']}, Thalia member with user ID {user_data['thalia_user_id']}",
                 )
             else:
-                await ctx.author.send("You have no associated Thalia user id")
+                await reply_and_delete(ctx, "You have no associated Thalia user id")
         except:
-            logger.exception("Error")
-            await ctx.author.send("Sorry, something went wrong.")
-
-        try:
-            await ctx.message.delete()
-        except:
-            # ignore
-            pass
+            logger.exception(
+                "Error: Could not send 'whoami' information to 'ctx.author=%s'",
+                ctx.author,
+            )
+            await reply_and_delete(ctx, "Sorry, something went wrong.")
 
     @member.command(help="Gives info on how to connect your Discord and Thalia account")
     async def connect(self, ctx):
@@ -60,13 +59,9 @@ class MemberCog(commands.Cog, name="Member management"):
             f"Visit {CONNECT_DOMAIN_NAME}?discord-user={ctx.author.id} to connect your Thalia account"
         )
         if user_data:
-            await ctx.author.send("Note: Your Discord tag has already been connected")
-
-        try:
-            await ctx.message.delete()
-        except:
-            # ignore
-            pass
+            await reply_and_delete(
+                ctx, "Note: Your Discord tag has already been connected"
+            )
 
     @member.command(help="Triggers a sync of your member information")
     async def sync(self, ctx):
@@ -82,18 +77,16 @@ class MemberCog(commands.Cog, name="Member management"):
                 discord_user = guild.get_member(ctx.author.id)
 
                 await sync_member(thalia_data, discord_user, guild)
-                await ctx.author.send("Your user data has been synced successfully")
+                await reply_and_delete(
+                    ctx, "Your user data has been synced successfully"
+                )
             else:
-                await ctx.author.send("You have no connected Thalia account")
+                await reply_and_delete(ctx, "You have no connected Thalia account")
         except:
-            logger.exception("Error")
-            await ctx.author.send("Sorry, something went wrong.")
-
-        try:
-            await ctx.message.delete()
-        except:
-            # ignore
-            pass
+            logger.exception(
+                "Error: Could not 'sync', invoked by: 'ctx.author=%s'", ctx.author
+            )
+            await reply_and_delete(ctx, "Sorry, something went wrong.")
 
 
 def setup(bot):
