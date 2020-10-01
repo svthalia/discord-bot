@@ -116,7 +116,7 @@ class MemberCog(commands.Cog, name="Member management"):
         await sync_members(members, membergroups, guild)
 
     @commands.is_owner()
-    @member.command(help="Triggers a full sync of all members")
+    @member.command(help="Triggers a full sync of all members", hidden=True)
     async def fullsync(self, ctx):
         await reply_and_delete(
             ctx, "Full sync triggered"
