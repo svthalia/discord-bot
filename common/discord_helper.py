@@ -19,12 +19,13 @@ async def get_client():
     return client
 
 
-def _calculate_roles(members, membergroups):
+def _calculate_member_roles(members, membergroups):
     for member in members.values():
-        members[member["pk"]]["roles"] = {
-            "Connected",
-            members[member["pk"]]["membership_type"].capitalize(),
-        }
+        if members[member["pk"]]["membership_type"]:
+            members[member["pk"]]["roles"] = {
+                "Connected",
+                members[member["pk"]]["membership_type"].capitalize(),
+            }
 
     for membergroup in membergroups:
         for group_member in membergroup["members"]:
@@ -51,45 +52,65 @@ def _calculate_roles(members, membergroups):
     return members
 
 
-async def _sync_roles(thalia_roles, member, guild):
-    discord_roles = []
+async def _calculate_roles(thalia_roles, member, guild):
+    discord_roles = set()
 
     for role_name in thalia_roles:
         discord_role = discord.utils.get(guild.roles, name=role_name)
         if not discord_role:
             discord_role = await guild.create_role(name=role_name)
-        discord_roles.append(discord_role)
+        discord_roles.add(discord_role)
 
-    syncable_guild_roles = [
-        role for role in guild.roles if role.name not in EXCLUDES_ROLES
-    ]
-    add_roles = list(set(discord_roles) - set(member.roles))
-    remove_roles = list(set(syncable_guild_roles) - set(discord_roles))
+    keep_roles = {role for role in member.roles if role.name in EXCLUDES_ROLES}
 
-    await member.add_roles(*add_roles, reason="Automatic sync")
-    await member.remove_roles(*remove_roles, reason="Automatic sync")
+    return discord_roles | keep_roles
 
 
 async def _prune_roles(guild):
-    syncable_guild_roles = [
-        role for role in guild.roles if role.name not in EXCLUDES_ROLES
+    remove_roles = [
+        role
+        for role in guild.roles
+        if role.name not in EXCLUDES_ROLES and len(role.members) == 0
     ]
-    remove_roles = [role for role in syncable_guild_roles if len(role.members) == 0]
     for role in remove_roles:
         await role.delete()
 
 
+async def _prune_members(members, guild):
+    non_syncable_guild_roles = [
+        role for role in guild.roles if role.name in EXCLUDES_ROLES
+    ]
+
+    discord_ids = list(
+        filter(
+            lambda x: x is not None, map(lambda x: x.get("discord"), members.values())
+        )
+    )
+    discord_members = filter(lambda x: x.id not in discord_ids, guild.members)
+    for member in discord_members:
+        try:
+            await member.edit(
+                roles=set(member.roles) & set(non_syncable_guild_roles),
+                reason="Automatic sync",
+            )
+        except:
+            logger.exception("Error syncing a member, %s", str(member))
+
+
 async def sync_members(members, membergroups, guild):
-    members = _calculate_roles(members, membergroups)
+    members = _calculate_member_roles(members, membergroups)
 
     for member in filter(lambda x: x.get("discord"), members.values()):
         discord_user = guild.get_member(member["discord"])
         if not discord_user:
             discord_user = await guild.fetch_member(member["discord"])
         try:
-            await _sync_roles(member["roles"], discord_user, guild)
-            await discord_user.edit(nick=member["display_name"])
+            roles = await _calculate_roles(member["roles"], discord_user, guild)
+            await discord_user.edit(
+                nick=member["display_name"], roles=roles, reason="Automatic sync"
+            )
         except:
-            logger.exception("Error syncing a member")
+            logger.exception("Error syncing a member, %s", member["display_name"])
 
+    await _prune_members(members, guild)
     await _prune_roles(guild)
