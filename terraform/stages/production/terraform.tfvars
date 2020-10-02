@@ -9,3 +9,7 @@ prefix = "discord-bot"
 stage = "production"
 
 domain_name = "thalia.nl"
+
+discord_command_prefix = "!"
+
+discord_excluded_roles = "Superadmin,Admin,Moderator,@everyone,Thalia Bot,Bots"

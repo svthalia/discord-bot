@@ -89,13 +89,15 @@ module "complete_auth_lambda" {
   api_gateway_arn = module.api_gateway.this_apigatewayv2_api_execution_arn
 
   environment_variables = {
-    THALIA_SERVER_URL    = var.thalia_server_url
-    THALIA_CLIENT_ID     = var.thalia_client_id
-    THALIA_CLIENT_SECRET = var.thalia_client_secret
-    OAUTH_REDIRECT_URI   = "https://${var.prefix}.${var.domain_name}/complete-auth"
-    DISCORD_GUILD_ID     = var.discord_guild_id
-    DISCORD_BOT_TOKEN    = var.discord_bot_token
-    USERS_TABLE          = split("/", var.users_table_arn)[1]
+    THALIA_SERVER_URL      = var.thalia_server_url
+    THALIA_CLIENT_ID       = var.thalia_client_id
+    THALIA_CLIENT_SECRET   = var.thalia_client_secret
+    OAUTH_REDIRECT_URI     = "https://${var.prefix}.${var.domain_name}/complete-auth"
+    DISCORD_GUILD_ID       = var.discord_guild_id
+    DISCORD_BOT_TOKEN      = var.discord_bot_token
+    DISCORD_EXCLUDED_ROLES = var.discord_excluded_roles
+    DISCORD_COMMAND_PREFIX = "!lambda!"
+    USERS_TABLE            = split("/", var.users_table_arn)[1]
   }
 
   attach_policy_statements = true

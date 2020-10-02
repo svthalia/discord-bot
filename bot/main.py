@@ -25,12 +25,9 @@ configure_logging("bot.log")
 COGS_MODULE = "cogs"
 
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-THALIA_CLIENT_ID = os.getenv("THALIA_CLIENT_ID")
-THALIA_CLIENT_SECRET = os.getenv("THALIA_CLIENT_SECRET")
-THALIA_SERVER_URL = os.getenv("THALIA_SERVER_URL")
-THALIA_SCOPES = "members:read read"
+PREFIX = os.getenv("DISCORD_COMMAND_PREFIX")
 
-bot = ThaliaBot(command_prefix="!")
+bot = ThaliaBot(command_prefix=PREFIX)
 logger = get_logger(__name__)
 
 if __name__ == "__main__":

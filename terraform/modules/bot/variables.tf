@@ -14,6 +14,14 @@ variable "discord_bot_token" {
   type = string
 }
 
+variable "discord_command_prefix" {
+  type = string
+}
+
+variable "discord_excluded_roles" {
+  type = string
+}
+
 variable "thalia_server_url" {
   type = string
 }

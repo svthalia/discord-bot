@@ -178,6 +178,8 @@ module "ec2" {
 
     echo "DISCORD_GUILD_ID = \"${var.discord_guild_id}\"" >> .env
     echo "DISCORD_BOT_TOKEN = \"${var.discord_bot_token}\"" >> .env
+    echo "DISCORD_EXCLUDED_ROLES = \"${var.discord_excluded_roles}\"" >> .env
+    echo "DISCORD_COMMAND_PREFIX = \"${var.discord_command_prefix}\"" >> .env
 
     echo "THALIA_CLIENT_ID = \"${var.thalia_client_id}\"" >> .env
     echo "THALIA_CLIENT_SECRET = \"${var.thalia_client_secret}\"" >> .env
