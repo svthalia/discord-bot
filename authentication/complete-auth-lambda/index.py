@@ -2,9 +2,9 @@ import json
 import base64
 import asyncio
 from common.thalia_oauth import get_oauth2_client, TOKEN_URL
-from common.thalia_api import get_authenticated_member
+from common.thalia_api import get_authenticated_member, get_membergroups
 from common.ddb import write_user
-from common.discord_helper import get_client, sync_member, DISCORD_GUILD_ID
+from common.discord_helper import get_client, sync_members, DISCORD_GUILD_ID
 from common.bot_logger import get_logger
 
 loop = asyncio.get_event_loop()
@@ -35,8 +35,14 @@ async def async_handle(event):
             discord_client = await get_client()
             guild = await discord_client.fetch_guild(DISCORD_GUILD_ID)
             member = await guild.fetch_member(state["discord_user"])
-            await sync_member(thalia_data, member, guild)
-            await member.send(f"Your account has been connected. Welcome to the Thalia Discord {thalia_data['display_name']}!")
+            thalia_data["discord"] = state["discord_user"]
+            membergroups = await get_membergroups(client)
+
+            await sync_members({thalia_data["pk"]: thalia_data}, membergroups, guild)
+
+            await member.send(
+                f"Your account has been connected. Welcome to the Thalia Discord {thalia_data['display_name']}!"
+            )
         except Exception as e:
             logger.exception("Error during Discord sync")
 

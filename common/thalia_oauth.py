@@ -21,7 +21,7 @@ def get_oauth2_client(token=None):
     return AsyncOAuth2Client(
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
-        scope="members:read",
+        scope="members:read activemembers:read",
         redirect_uri=REDIRECT_URI,
         code_challenge_method="S256",
         token=token,
@@ -33,7 +33,7 @@ async def get_backend_oauth_client():
     client = AsyncOAuth2Client(
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
-        scope="read members:read",
+        scope="read members:read activemembers:read",
         redirect_uri=REDIRECT_URI,
         code_challenge_method="S256",
         update_token=_update_token,
