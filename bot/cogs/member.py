@@ -61,6 +61,12 @@ class MemberCog(commands.Cog, name="Member management"):
                 ctx, "Note: Your Discord tag has already been connected"
             )
 
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        await member.send(
+            f"Welcome to the Thalia Discord! Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your Thalia account"
+        )
+
 
 def setup(bot):
     bot.add_cog(MemberCog(bot))
