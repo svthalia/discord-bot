@@ -33,8 +33,9 @@ module "discord_bot_authentication" {
   thalia_client_id     = var.thalia_auth_client_id
   thalia_client_secret = var.thalia_auth_client_secret
 
-  discord_guild_id  = var.discord_guild_id
-  discord_bot_token = var.discord_bot_token
+  discord_guild_id           = var.discord_guild_id
+  discord_bot_token          = var.discord_bot_token
+  discord_bot_excluded_roles = var.discord_bot_excluded_roles
 
   users_table_arn = module.discord_bot_common.users_table_arn
 }
@@ -48,8 +49,10 @@ module "discord_bot_server" {
   thalia_client_id     = var.thalia_bot_client_id
   thalia_client_secret = var.thalia_bot_client_secret
 
-  discord_guild_id  = var.discord_guild_id
-  discord_bot_token = var.discord_bot_token
+  discord_guild_id           = var.discord_guild_id
+  discord_bot_token          = var.discord_bot_token
+  discord_bot_command_prefix = var.discord_bot_command_prefix
+  discord_bot_excluded_roles = var.discord_bot_excluded_roles
 
   domain_name     = module.discord_bot_authentication.domain_name
   users_table_arn = module.discord_bot_common.users_table_arn

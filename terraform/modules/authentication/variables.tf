@@ -18,6 +18,10 @@ variable "discord_guild_id" {
   type = string
 }
 
+variable "discord_excluded_roles" {
+  type = string
+}
+
 variable "thalia_server_url" {
   type = string
 }

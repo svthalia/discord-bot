@@ -1,5 +1,3 @@
-import os
-
 import discord
 from discord.ext import commands, tasks
 
@@ -11,16 +9,11 @@ from common.helper_functions import reply_and_delete
 
 logger = get_logger(__name__)
 
-CONNECT_DOMAIN_NAME = f"{os.getenv('DOMAIN_NAME')}"
-
 
 class SyncCog(commands.Cog, name="Syncing"):
     def __init__(self, bot):
         self.bot = bot
         logger.info("Sync cog initialised")
-
-    @commands.Cog.listener()
-    async def on_ready(self):
         self.auto_full_sync.start()
 
     def cog_unload(self):
@@ -79,6 +72,10 @@ class SyncCog(commands.Cog, name="Syncing"):
     async def auto_full_sync(self):
         logger.info("Running periodic member sync")
         await self._full_sync()
+
+    @auto_full_sync.before_loop
+    async def before_auto_full_sync(self):
+        await self.bot.wait_until_ready()
 
     @commands.is_owner()
     @sync.command(name="full", help="Triggers a full sync of all members", hidden=True)

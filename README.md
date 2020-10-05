@@ -52,6 +52,8 @@ _Note_: The environment variables in the `.env` file only work for the bot, the 
 ```
 DISCORD_BOT_TOKEN = "<generated-for-your-bot>"
 DISCORD_GUILD_ID = "430967226567809111"
+DISCORD_COMMAND_PREFIX = "!"
+DISCORD_EXCLUDED_ROLES = "Superadmin,Admin,Moderator,Thalia Bot,@everyone"
 
 USERS_TABLE = "discord-bot-develop-users"
 DOMAIN_NAME = "https://discord-bot-develop.technicie.nl/"
