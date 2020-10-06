@@ -20,7 +20,7 @@ class GroupCog(commands.Cog, name="Group management"):
     )
     async def group(self, ctx):
         await ctx.send("No subcommand was found!")
-        await ctx.send_help(self.member)
+        await ctx.send_help(self.group)
 
     @group.command(help="Outputs all users with the role given in the argument(s)")
     async def getmembers(self, ctx, *args):
