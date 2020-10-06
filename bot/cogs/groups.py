@@ -36,7 +36,7 @@ class GroupCog(commands.Cog, name="Group management"):
 
                         msg = Embed(title=role.name, colour=0xE62272)
                         for member in role.members:
-                            msg.add_field(name="\u200B", value=str(member.nick), inline=False)
+                            msg.add_field(name="\u200B", value=str(member.nick), inline=True)
 
                         await ctx.author.send(embed=msg)
                         try:
