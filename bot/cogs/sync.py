@@ -72,6 +72,7 @@ class SyncCog(commands.Cog, name="Syncing"):
     async def auto_full_sync(self):
         logger.info("Running periodic member sync")
         await self._full_sync()
+        logger.info("Periodic member sync complete")
 
     @auto_full_sync.before_loop
     async def before_auto_full_sync(self):
@@ -82,6 +83,7 @@ class SyncCog(commands.Cog, name="Syncing"):
     async def fullsync(self, ctx):
         await reply_and_delete(ctx, "Full sync triggered")
         await self._full_sync()
+        await reply_and_delete(ctx, "Full sync completed")
 
 
 def setup(bot):

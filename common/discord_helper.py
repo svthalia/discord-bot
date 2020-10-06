@@ -1,4 +1,5 @@
 import os
+import asyncio
 import discord
 from discord import Client
 
@@ -74,41 +75,49 @@ async def _prune_roles(guild):
         await role.delete()
 
 
-async def _prune_members(members, guild):
-    non_syncable_guild_roles = [
-        role for role in guild.roles if role.name in EXCLUDES_ROLES
-    ]
-
+async def _prune_members(members, guild, non_syncable_guild_roles):
     discord_ids = list(
         filter(
             lambda x: x is not None, map(lambda x: x.get("discord"), members.values())
         )
     )
     discord_members = filter(lambda x: x.id not in discord_ids, guild.members)
+    edits = []
     for member in discord_members:
         try:
-            await member.edit(
-                roles=set(member.roles) & set(non_syncable_guild_roles),
-                reason="Automatic sync",
-            )
+            if len(set(member.roles) - set(non_syncable_guild_roles)) > 0:
+                edits.append(member.edit(
+                    roles=set(member.roles) & set(non_syncable_guild_roles),
+                    reason="Automatic sync",
+                ))
         except:
             logger.exception("Error syncing a member, %s", str(member))
+    await asyncio.gather(*edits)
 
 
 async def sync_members(members, membergroups, guild):
     members = _calculate_member_roles(members, membergroups)
 
+    non_syncable_guild_roles = [
+        role for role in guild.roles if role.name in EXCLUDES_ROLES
+    ]
+
+    edits = []
     for member in filter(lambda x: x.get("discord"), members.values()):
         discord_user = guild.get_member(member["discord"])
         if not discord_user:
             discord_user = await guild.fetch_member(member["discord"])
         try:
             roles = await _calculate_roles(member["roles"], discord_user, guild)
-            await discord_user.edit(
-                nick=member["display_name"], roles=roles, reason="Automatic sync"
-            )
+            if (len(set(roles) - set(discord_user.roles) - set(non_syncable_guild_roles)) > 0 or discord_user.nick != member["display_name"]):
+                edits.append(await discord_user.edit(
+                    nick=member["display_name"], roles=roles, reason="Automatic sync"
+                ))
         except:
             logger.exception("Error syncing a member, %s", member["display_name"])
+    await asyncio.gather(*edits)
 
-    await _prune_members(members, guild)
+    logger.info("Starting member prune")
+    await _prune_members(members, guild, non_syncable_guild_roles)
+    logger.info("Starting role prune")
     await _prune_roles(guild)
