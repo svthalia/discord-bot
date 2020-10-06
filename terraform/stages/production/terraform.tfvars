@@ -8,7 +8,7 @@ prefix = "discord-bot"
 
 stage = "production"
 
-domain_name = "thalia.nl"
+domain_name = "thalia.nu"
 
 discord_command_prefix = "!"
 
