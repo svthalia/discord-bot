@@ -66,7 +66,7 @@ class GroupCog(commands.Cog, name="Group management"):
                 )
         except:
             logger.exception(
-                "Error in getgroup: 'ctx.message.content=%s' by user: 'ctx.author=%s'",
+                "Error in getmembers: 'ctx.message.content=%s' by user: 'ctx.author=%s'",
                 ctx.message.content,
                 ctx.author,
             )
