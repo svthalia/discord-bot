@@ -3,7 +3,7 @@ from typing import List, Union
 import os
 import aioboto3
 
-from boto3.dynamodb.conditions import Key, Attr
+from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
 from common.bot_logger import get_logger
@@ -59,9 +59,7 @@ async def get_discord_users_by_thalia_ids(thalia_user_ids: List[str]) -> List[di
     async with aioboto3.resource("dynamodb") as dynamodb:
         users_table = await dynamodb.Table(USERS_TABLE)
         try:
-            response = await users_table.scan(
-                FilterExpression=Attr("thalia_user_id").is_in(thalia_user_ids)
-            )
+            response = await users_table.scan()
             data = response["Items"]
 
             while "LastEvaluatedKey" in response:
