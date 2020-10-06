@@ -66,7 +66,7 @@ class SyncCog(commands.Cog, name="Syncing"):
                 record["discord_user_id"]
             )
 
-        await sync_members(members, membergroups, guild)
+        await sync_members(members, membergroups, guild, True)
 
     @tasks.loop(minutes=30)
     async def auto_full_sync(self):
