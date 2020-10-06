@@ -34,7 +34,7 @@ module "api_gateway" {
     "GET /complete-auth" = {
       lambda_arn             = module.complete_auth_lambda.function_arn
       payload_format_version = "2.0"
-      timeout_milliseconds   = 12000
+      timeout_milliseconds   = 29000
     }
 
     "$default" = {

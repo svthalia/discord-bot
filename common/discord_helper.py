@@ -1,4 +1,5 @@
 import os
+import asyncio
 import discord
 from discord import Client
 
@@ -85,14 +86,16 @@ async def _prune_members(members, guild):
         )
     )
     discord_members = filter(lambda x: x.id not in discord_ids, guild.members)
+    edits = []
     for member in discord_members:
         try:
-            await member.edit(
+            edits.append(member.edit(
                 roles=set(member.roles) & set(non_syncable_guild_roles),
                 reason="Automatic sync",
-            )
+            ))
         except:
             logger.exception("Error syncing a member, %s", str(member))
+    await asyncio.gather(*edits)
 
 
 async def sync_members(members, membergroups, guild):
@@ -110,5 +113,7 @@ async def sync_members(members, membergroups, guild):
         except:
             logger.exception("Error syncing a member, %s", member["display_name"])
 
+    logger.info("Starting member prune")
     await _prune_members(members, guild)
+    logger.info("Starting role prune")
     await _prune_roles(guild)
