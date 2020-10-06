@@ -1,5 +1,4 @@
 import asyncio
-import os
 
 from discord import Activity, ActivityType
 from discord.ext import commands
