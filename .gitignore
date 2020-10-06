@@ -11,3 +11,5 @@ local.auto.tfvars
 __pycache__
 .vscode/
 bot.egg-info/
+
+bot.log*
