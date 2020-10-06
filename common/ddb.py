@@ -73,4 +73,5 @@ async def get_discord_users_by_thalia_ids(thalia_user_ids: List[str]) -> List[di
             logger.error(e.response["Error"]["Message"])
             return None
         else:
+            data = [member for member in data if member["thalia_user_id"] in thalia_user_ids]
             return data if len(data) > 0 else None
