@@ -53,8 +53,9 @@ class MemberCog(commands.Cog, name="Member management"):
     async def connect(self, ctx):
         user_data = await get_user_by_discord_id(ctx.author.id)
 
-        await ctx.author.send(
-            f"Visit {CONNECT_DOMAIN_NAME}?discord-user={ctx.author.id} to connect your Thalia account"
+        await reply_and_delete(
+            ctx,
+            f"Visit {CONNECT_DOMAIN_NAME}?discord-user={ctx.author.id} to connect your Thalia account",
         )
         if user_data:
             await reply_and_delete(
