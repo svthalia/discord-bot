@@ -19,7 +19,7 @@ class InfoCog(commands.Cog, name="Bot Information"):
         await self.bot.change_presence(
             activity=Activity(
                 type=ActivityType.watching,
-                name=f"{os.getenv('DISCORD_COMMAND_PREFIX')}help for docs",
+                name=f"{self.bot.command_prefix}help for docs",
             ),
             status="!help for docs",
         )
