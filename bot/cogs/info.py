@@ -1,6 +1,8 @@
 import asyncio
-from discord.ext import commands
+import os
+
 from discord import Activity, ActivityType
+from discord.ext import commands
 
 from common.bot_logger import get_logger
 
@@ -15,7 +17,10 @@ class InfoCog(commands.Cog, name="Bot Information"):
     @commands.Cog.listener()
     async def on_ready(self):
         await self.bot.change_presence(
-            activity=Activity(type=ActivityType.watching, name="!help for docs"),
+            activity=Activity(
+                type=ActivityType.watching,
+                name=f"{os.getenv('DISCORD_COMMAND_PREFIX')}help for docs",
+            ),
             status="!help for docs",
         )
 
