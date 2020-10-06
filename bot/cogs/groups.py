@@ -23,7 +23,7 @@ class GroupCog(commands.Cog, name="Group management"):
         await ctx.send_help(self.member)
 
     @group.command(help="Outputs all users with the role given in the argument(s)")
-    async def getgroup(self, ctx, *args):
+    async def getmembers(self, ctx, *args):
         try:
             if ctx.guild:
                 roles = ctx.guild.roles
