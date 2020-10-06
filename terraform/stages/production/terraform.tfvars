@@ -12,4 +12,4 @@ domain_name = "thalia.nu"
 
 discord_command_prefix = "!"
 
-discord_excluded_roles = "Superadmin,Admin,Moderator,Board,@everyone,Thalia Bot,Bots"
+discord_excluded_roles = "Superadmin,Admin,Moderator,Server Booster,Board,@everyone,Thalia Bot,Bots"

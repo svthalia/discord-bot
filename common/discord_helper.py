@@ -95,7 +95,7 @@ async def _prune_members(members, guild, non_syncable_guild_roles):
     await asyncio.gather(*edits)
 
 
-async def sync_members(members, membergroups, guild):
+async def sync_members(members, membergroups, guild, prune=False):
     members = _calculate_member_roles(members, membergroups)
 
     non_syncable_guild_roles = [
@@ -117,7 +117,8 @@ async def sync_members(members, membergroups, guild):
             logger.exception("Error syncing a member, %s", member["display_name"])
     await asyncio.gather(*edits)
 
-    logger.info("Starting member prune")
-    await _prune_members(members, guild, non_syncable_guild_roles)
-    logger.info("Starting role prune")
-    await _prune_roles(guild)
+    if prune:
+        logger.info("Starting member prune")
+        await _prune_members(members, guild, non_syncable_guild_roles)
+        logger.info("Starting role prune")
+        await _prune_roles(guild)
