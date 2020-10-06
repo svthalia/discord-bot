@@ -8,7 +8,7 @@ logger = get_logger(__name__)
 
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 DISCORD_GUILD_ID = int(os.getenv("DISCORD_GUILD_ID"))
-EXCLUDES_ROLES = set(os.getenv("DISCORD_EXCLUDED_ROLES").split(","))
+EXCLUDES_ROLES = set(os.getenv("DISCORD_EXCLUDED_ROLES", "").split(","))
 
 
 async def get_client():
