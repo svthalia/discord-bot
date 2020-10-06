@@ -1,4 +1,4 @@
-from discord import Embed, NotFound
+from discord import Embed
 from discord.utils import find
 from discord.ext import commands
 
@@ -36,7 +36,9 @@ class GroupCog(commands.Cog, name="Group management"):
 
                         msg = Embed(title=role.name, colour=0xE62272)
                         for member in role.members:
-                            msg.add_field(name="\u200B", value=str(member.nick), inline=True)
+                            msg.add_field(
+                                name="\u200B", value=str(member.nick), inline=True
+                            )
 
                         await ctx.author.send(embed=msg)
                         try:
@@ -47,10 +49,17 @@ class GroupCog(commands.Cog, name="Group management"):
                     else:
                         if arg == args[0]:
                             await reply_and_delete(
-                                ctx, "Group '" + arg + "' does not have a role in the server."
+                                ctx,
+                                "Group '"
+                                + arg
+                                + "' does not have a role in the server.",
                             )
                         else:
-                            await ctx.author.send("Group '" + arg + "' does not have a role in the server.")
+                            await ctx.author.send(
+                                "Group '"
+                                + arg
+                                + "' does not have a role in the server."
+                            )
             else:
                 await reply_and_delete(
                     ctx, "This command can only be used in a discord server!"
