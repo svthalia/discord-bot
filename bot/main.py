@@ -5,6 +5,7 @@ import traceback
 from os.path import dirname, join, abspath, isfile, isdir
 from os import listdir
 
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,6 +18,7 @@ if isdir("../common"):
 # pylint: disable=wrong-import-position
 from core.bot import ThaliaBot
 from common.bot_logger import get_logger, configure_logging
+from common.helper_functions import reply_and_delete
 
 # pylint: enable=wrong-import-position
 
@@ -49,13 +51,36 @@ async def on_ready():
     logger.info(f"{bot.user.name} has connected to Discord!")
 
 
-# pylint: disable=unused-argument
 @bot.event
 async def on_error(event_name):
-    logger.warning(traceback.format_exc())
+    # pylint: disable=unused-argument
+    logger.warning("Ignoring exception: %s", traceback.format_exc())
 
 
-# pylint: enable=unused-argument
+@bot.event
+async def on_command_error(ctx, error):
+    if hasattr(ctx.command, "on_error"):
+        return
+
+    # This prevents any cogs with an overwritten cog_command_error being handled here.
+    cog = ctx.cog
+    if cog:
+        # pylint: disable=protected-access
+        if cog._get_overridden_method(cog.cog_command_error) is not None:
+            return
+
+    # Allows us to check for original exceptions raised and sent to CommandInvokeError.
+    # If nothing is found. We keep the exception passed to on_command_error.
+    error = getattr(error, "original", error)
+
+    if isinstance(error, commands.CommandNotFound):
+        await reply_and_delete(ctx, "That command does not exist.")
+    elif isinstance(error, commands.DisabledCommand):
+        await reply_and_delete(ctx, f"{ctx.command} has been disabled.")
+    else:
+        logger.warning(
+            "Ignoring exception in command %s: %s", ctx.command, traceback.format_exc()
+        )
 
 
 bot.run(TOKEN)

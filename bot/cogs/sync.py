@@ -1,8 +1,10 @@
 import discord
 from discord.ext import commands, tasks
+from authlib.integrations.base_client import InvalidTokenError
 
 from common.bot_logger import get_logger
 from common.ddb import get_user_by_discord_id, get_discord_users_by_thalia_ids
+from common.thalia_oauth import get_backend_oauth_client
 from common.thalia_api import get_member_by_id, get_members, get_membergroups
 from common.discord_helper import DISCORD_GUILD_ID, sync_members
 from common.helper_functions import reply_and_delete
@@ -49,14 +51,22 @@ class SyncCog(commands.Cog, name="Syncing"):
             )
             await reply_and_delete(ctx, "Sorry, something went wrong.")
 
+    async def _do_api_calls(self):
+        try:
+            members = {
+                member["pk"]: member
+                for member in await get_members(self.bot.thalia_client)
+            }
+            membergroups = await get_membergroups(self.bot.thalia_client)
+        except InvalidTokenError:
+            self.bot.thalia_client = await get_backend_oauth_client()
+            members, membergroups = await self._do_api_calls()
+        return members, membergroups
+
     async def _full_sync(self):
         guild = discord.utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
 
-        members = {
-            member["pk"]: member for member in await get_members(self.bot.thalia_client)
-        }
-        membergroups = await get_membergroups(self.bot.thalia_client)
-
+        members, membergroups = await self._do_api_calls()
         user_table = await get_discord_users_by_thalia_ids(
             [str(m) for m in members.keys()]
         )
