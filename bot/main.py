@@ -79,7 +79,11 @@ async def on_command_error(ctx, error):
         await reply_and_delete(ctx, f"{ctx.command} has been disabled.")
     else:
         logger.warning(
-            "Ignoring exception in command %s: %s", ctx.command, traceback.format_exc()
+            "Ignoring exception in command %s:\n%s",
+            ctx.command,
+            "".join(
+                traceback.format_exception(type(error), error, error.__traceback__)
+            ),
         )
 
 

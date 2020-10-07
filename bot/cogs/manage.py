@@ -1,7 +1,12 @@
 import asyncio
+from typing import Optional
+import discord
+from discord import User
 from discord.ext import commands
 
 from common.bot_logger import get_logger
+from common.discord_helper import DISCORD_GUILD_ID, DISCORD_SUPERUSER_ROLE
+from common.helper_functions import reply_and_delete
 
 logger = get_logger(__name__)
 
@@ -15,6 +20,25 @@ class ManageCog(commands.Cog, name="Bot management"):
     async def manage(self, ctx):
         await ctx.send("No subcommand was found!")
         await ctx.send_help(self.manage)
+
+    @manage.command(help="Toggle the Admin role for you or a mentioned user")
+    @commands.is_owner()
+    async def su(self, ctx, user: Optional[User]):
+        user = user or ctx.author
+        guild = discord.utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
+        member = discord.utils.get(guild.members, id=user.id)
+        role = discord.utils.get(guild.roles, name=DISCORD_SUPERUSER_ROLE)
+
+        if discord.utils.get(member.roles, id=role.id):
+            await member.remove_roles(*[role])
+            await reply_and_delete(
+                ctx, f"Removed the {DISCORD_SUPERUSER_ROLE} role from <@{member.id}>"
+            )
+        else:
+            await member.add_roles(*[role])
+            await reply_and_delete(
+                ctx, f"Added the {DISCORD_SUPERUSER_ROLE} role to <@{member.id}>"
+            )
 
     @manage.command(help="Load a module from the cogs in the repository")
     @commands.is_owner()
