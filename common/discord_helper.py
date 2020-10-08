@@ -118,12 +118,12 @@ async def sync_members(members, membergroups, guild, prune=False):
         if (
             len(set(roles) - set(discord_user.roles) - set(non_syncable_guild_roles))
             > 0
-            or discord_user.nick != member["display_name"]
+            or discord_user.display_name != member["display_name"][:32]
         ):
             edits.append(
                 _edit_member(
                     discord_user,
-                    nick=member["display_name"],
+                    nick=member["display_name"][:32],
                     roles=roles,
                     reason="Automatic sync",
                 )
