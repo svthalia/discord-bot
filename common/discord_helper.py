@@ -2,8 +2,10 @@ import os
 import asyncio
 import discord
 from discord import Client
+from discord.ext import commands
 
 from common.bot_logger import get_logger
+from common.helper_functions import reply_and_delete
 
 logger = get_logger(__name__)
 
@@ -11,6 +13,7 @@ DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 DISCORD_GUILD_ID = int(os.getenv("DISCORD_GUILD_ID"))
 EXCLUDES_ROLES = set(os.getenv("DISCORD_EXCLUDED_ROLES", "").split(","))
 DISCORD_SUPERUSER_ROLE = "Admin"
+DISCORD_CONNECTED_ROLE = "Connected"
 
 
 async def get_client():
@@ -136,3 +139,17 @@ async def sync_members(members, membergroups, guild, prune=False):
         await _prune_members(members, guild, non_syncable_guild_roles)
         logger.info("Starting role prune")
         await _prune_roles(guild)
+
+
+def is_connected_or_dm():
+    async def predicate(ctx):
+        if isinstance(ctx.channel, discord.abc.GuildChannel):
+            role = discord.utils.get(ctx.author.roles, name=DISCORD_CONNECTED_ROLE)
+            if role is None:
+                await reply_and_delete(
+                    ctx, "You do not have access to execute this command."
+                )
+                return False
+        return True
+
+    return commands.check(predicate)

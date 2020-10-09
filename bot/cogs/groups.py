@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from common.bot_logger import get_logger
 from common.helper_functions import reply_and_delete
-from common.discord_helper import DISCORD_GUILD_ID
+from common.discord_helper import DISCORD_GUILD_ID, is_connected_or_dm
 
 logger = get_logger(__name__)
 
@@ -24,6 +24,7 @@ class GroupCog(commands.Cog, name="Group management"):
         await ctx.send_help(self.group)
 
     @group.command(help="Outputs all users with the role given in the argument(s)")
+    @is_connected_or_dm()
     async def getmembers(self, ctx, *args):
         try:
             roles = get(self.bot.guilds, id=DISCORD_GUILD_ID).roles
