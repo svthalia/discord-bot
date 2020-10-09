@@ -1,7 +1,7 @@
 import asyncio
 from typing import Optional
-import discord
-from discord import User
+
+from discord import User, utils
 from discord.ext import commands
 
 from common.bot_logger import get_logger
@@ -25,11 +25,11 @@ class ManageCog(commands.Cog, name="Bot management"):
     @commands.is_owner()
     async def su(self, ctx, user: Optional[User]):
         user = user or ctx.author
-        guild = discord.utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
-        member = discord.utils.get(guild.members, id=user.id)
-        role = discord.utils.get(guild.roles, name=DISCORD_SUPERUSER_ROLE)
+        guild = utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
+        member = utils.get(guild.members, id=user.id)
+        role = utils.get(guild.roles, name=DISCORD_SUPERUSER_ROLE)
 
-        if discord.utils.get(member.roles, id=role.id):
+        if utils.get(member.roles, id=role.id):
             await member.remove_roles(*[role])
             await reply_and_delete(
                 ctx, f"Removed the {DISCORD_SUPERUSER_ROLE} role from <@{member.id}>"
@@ -103,6 +103,15 @@ class ManageCog(commands.Cog, name="Bot management"):
             await ctx.send(f"**`ERROR:`** {type(e).__name__} - {e}")
         else:
             await ctx.send("**`SUCCESS`**")
+
+    @manage.command(
+        help="Announce something in a channel. The complete string after the channel name will be used as message. That includes newlines.",
+    )
+    @commands.is_owner()
+    async def announce(self, _, channel: str, *, message: str):
+        guild = utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
+        channel = utils.get(guild.channels, name=channel)
+        await channel.send(message)
 
 
 def setup(bot):
