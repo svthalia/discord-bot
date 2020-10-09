@@ -26,30 +26,32 @@ class SyncCog(commands.Cog, name="Syncing"):
         invoke_without_command=True,
         help="Sync your roles and nickname with the Thalia website",
     )
+    @commands.cooldown(rate=1, per=900, type=commands.BucketType.user)
     async def sync(self, ctx):
-        try:
-            user_data = await get_user_by_discord_id(ctx.author.id)
+        async with ctx.author.typing():
+            try:
+                user_data = await get_user_by_discord_id(ctx.author.id)
 
-            if user_data:
-                member = await get_member_by_id(
-                    self.bot.thalia_client, user_data["thalia_user_id"]
+                if user_data:
+                    member = await get_member_by_id(
+                        self.bot.thalia_client, user_data["thalia_user_id"]
+                    )
+                    member["discord"] = ctx.author.id
+                    membergroups = await get_membergroups(self.bot.thalia_client)
+
+                    guild = discord.utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
+
+                    await sync_members({member["pk"]: member}, membergroups, guild)
+                    await reply_and_delete(
+                        ctx, "Your user data has been synced successfully"
+                    )
+                else:
+                    await reply_and_delete(ctx, "You have no connected Thalia account")
+            except:
+                logger.exception(
+                    "Error: Could not 'sync', invoked by: 'ctx.author=%s'", ctx.author
                 )
-                member["discord"] = ctx.author.id
-                membergroups = await get_membergroups(self.bot.thalia_client)
-
-                guild = discord.utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
-
-                await sync_members({member["pk"]: member}, membergroups, guild)
-                await reply_and_delete(
-                    ctx, "Your user data has been synced successfully"
-                )
-            else:
-                await reply_and_delete(ctx, "You have no connected Thalia account")
-        except:
-            logger.exception(
-                "Error: Could not 'sync', invoked by: 'ctx.author=%s'", ctx.author
-            )
-            await reply_and_delete(ctx, "Sorry, something went wrong.")
+                await reply_and_delete(ctx, "Sorry, something went wrong.")
 
     async def _do_api_calls(self):
         try:
@@ -92,8 +94,9 @@ class SyncCog(commands.Cog, name="Syncing"):
     @sync.command(name="full", help="Triggers a full sync of all members", hidden=True)
     async def fullsync(self, ctx):
         await reply_and_delete(ctx, "Full sync triggered")
-        await self._full_sync()
-        await reply_and_delete(ctx, "Full sync completed")
+        async with ctx.author.typing():
+            await self._full_sync()
+            await reply_and_delete(ctx, "Full sync completed")
 
 
 def setup(bot):
