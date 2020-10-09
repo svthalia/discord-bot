@@ -1,9 +1,10 @@
 from discord import Embed
-from discord.utils import find
+from discord.utils import find, get
 from discord.ext import commands
 
 from common.bot_logger import get_logger
 from common.helper_functions import reply_and_delete
+from common.discord_helper import DISCORD_GUILD_ID
 
 logger = get_logger(__name__)
 
@@ -25,47 +26,37 @@ class GroupCog(commands.Cog, name="Group management"):
     @group.command(help="Outputs all users with the role given in the argument(s)")
     async def getmembers(self, ctx, *args):
         try:
-            if ctx.guild:
-                roles = ctx.guild.roles
-                for arg in args:
-                    if arg.lower() in map(lambda r: r.name.lower(), roles):
-                        # get members and pass info
-                        # pylint: disable=cell-var-from-loop
-                        role = find(lambda r: r.name.lower() == arg.lower(), roles)
-                        # pylint: enable=cell-var-from-loop
+            roles = get(self.bot.guilds, id=DISCORD_GUILD_ID).roles
+            for arg in args:
+                if arg.lower() in map(lambda r: r.name.lower(), roles):
+                    # get members and pass info
+                    # pylint: disable=cell-var-from-loop
+                    role = find(lambda r: r.name.lower() == arg.lower(), roles)
+                    # pylint: enable=cell-var-from-loop
 
-                        msg = Embed(title=role.name, colour=0xE62272)
-                        for member in role.members:
-                            msg.add_field(
-                                name="\u200B",
-                                value=str(member.display_name),
-                                inline=True,
-                            )
+                    msg = Embed(
+                        title=role.name,
+                        colour=0xE62272,
+                        description="\n".join(
+                            [member.display_name for member in role.members]
+                        ),
+                    )
 
-                        await ctx.author.send(embed=msg)
-                        try:
-                            await ctx.message.delete()
-                        except:
-                            # ignore
-                            pass
+                    await ctx.author.send(embed=msg)
+                    try:
+                        await ctx.message.delete()
+                    except:
+                        # ignore
+                        pass
+                else:
+                    if arg == args[0]:
+                        await reply_and_delete(
+                            ctx, f"Group '{arg}' does not have a role in the server."
+                        )
                     else:
-                        if arg == args[0]:
-                            await reply_and_delete(
-                                ctx,
-                                "Group '"
-                                + arg
-                                + "' does not have a role in the server.",
-                            )
-                        else:
-                            await ctx.author.send(
-                                "Group '"
-                                + arg
-                                + "' does not have a role in the server."
-                            )
-            else:
-                await reply_and_delete(
-                    ctx, "This command can only be used in a discord server!"
-                )
+                        await ctx.author.send(
+                            f"Group '{arg}' does not have a role in the server."
+                        )
         except:
             logger.exception(
                 "Error in getmembers: 'ctx.message.content=%s' by user: 'ctx.author=%s'",
