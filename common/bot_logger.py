@@ -1,92 +1,29 @@
 import logging
 import re
 import sys
+import asyncio
 
-from logging.handlers import RotatingFileHandler
+from logging import StreamHandler
+from logging.handlers import RotatingFileHandler, QueueHandler, QueueListener
+from queue import SimpleQueue as Queue
 from string import Formatter
 
 import _string
 
-try:
-    from colorama import Fore, Style
-except ImportError:
-    Fore = Style = type("Dummy", (object,), {"__getattr__": lambda self, item: ""})()
+
+class LocalQueueHandler(QueueHandler):
+    def emit(self, record: logging.LogRecord) -> None:
+        # Removed the call to self.prepare(), handle task cancellation
+        try:
+            self.enqueue(record)
+        except asyncio.CancelledError as e:
+            raise e
+        except Exception:
+            self.handleError(record)
 
 
-class BotLogger(logging.Logger):
-    @staticmethod
-    def _debug_(*msgs):
-        return f'{Fore.CYAN}{" ".join(msgs)}{Style.RESET_ALL}'
-
-    @staticmethod
-    def _info_(*msgs):
-        return f'{Fore.LIGHTMAGENTA_EX}{" ".join(msgs)}{Style.RESET_ALL}'
-
-    @staticmethod
-    def _error_(*msgs):
-        return f'{Fore.RED}{" ".join(msgs)}{Style.RESET_ALL}'
-
-    def debug(self, msg, *args, **kwargs):
-        if self.isEnabledFor(logging.DEBUG):
-            self._log(logging.DEBUG, self._debug_(msg), args, **kwargs)
-
-    def info(self, msg, *args, **kwargs):
-        if self.isEnabledFor(logging.INFO):
-            self._log(logging.INFO, self._info_(msg), args, **kwargs)
-
-    def warning(self, msg, *args, **kwargs):
-        if self.isEnabledFor(logging.WARNING):
-            self._log(logging.WARNING, self._error_(msg), args, **kwargs)
-
-    def error(self, msg, *args, **kwargs):
-        if self.isEnabledFor(logging.ERROR):
-            self._log(logging.ERROR, self._error_(msg), args, **kwargs)
-
-    def critical(self, msg, *args, **kwargs):
-        if self.isEnabledFor(logging.CRITICAL):
-            self._log(logging.CRITICAL, self._error_(msg), args, **kwargs)
-
-    def line(self, level="info"):
-        if level == "info":
-            level = logging.INFO
-        elif level == "debug":
-            level = logging.DEBUG
-        else:
-            level = logging.INFO
-        if self.isEnabledFor(level):
-            self._log(
-                level,
-                Fore.BLACK
-                + Style.BRIGHT
-                + "-------------------------"
-                + Style.RESET_ALL,
-                [],
-            )
-
-
-logging.setLoggerClass(BotLogger)
-log_level = logging.INFO
-loggers = set()
-
-ch = logging.StreamHandler(stream=sys.stdout)
-ch.setLevel(log_level)
-formatter = logging.Formatter(
-    "%(asctime)s %(name)s[%(lineno)d] - %(levelname)s: %(message)s",
-    datefmt="%m/%d/%y %H:%M:%S",
-)
-ch.setFormatter(formatter)
-
-ch_debug = None
-
-
-def get_logger(name=None) -> BotLogger:
-    logger = logging.getLogger(name)
-    logger.setLevel(log_level)
-    logger.addHandler(ch)
-    if ch_debug is not None:
-        logger.addHandler(ch_debug)
-    loggers.add(logger)
-    return logger
+def get_logger(name=None):
+    return logging.getLogger(name)
 
 
 class FileFormatter(logging.Formatter):
@@ -97,25 +34,60 @@ class FileFormatter(logging.Formatter):
         return super().format(record)
 
 
-def configure_logging(name, level=None):
-    global ch_debug, log_level
-    ch_debug = RotatingFileHandler(name, mode="a+", maxBytes=48000, backupCount=1)
+class ColouredFormatter(logging.Formatter):
+    GREY, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
 
-    formatter_debug = FileFormatter(
-        "%(asctime)s %(name)s[%(lineno)d] - %(levelname)s: %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
+    RESET_SEQ = "\033[0m"
+    COLOR_SEQ = "\033[%dm"
+    BOLD_SEQ = "\033[1m"
+
+    COLORS = {
+        "DEBUG": WHITE,
+        "INFO": CYAN,
+        "WARNING": YELLOW,
+        "ERROR": RED,
+        "CRITICAL": RED,
+    }
+
+    def format(self, record):
+        levelname = record.levelname
+        if levelname in self.COLORS:
+            record.levelname = self.BOLD_SEQ + levelname + self.RESET_SEQ
+            record.msg = (
+                self.COLOR_SEQ % (90 + self.COLORS[levelname])
+                + record.msg
+                + self.RESET_SEQ
+            )
+        return logging.Formatter.format(self, record)
+
+
+def configure_logging(name, level=logging.INFO):
+    file_handler = RotatingFileHandler(name, mode="a+", maxBytes=48000, backupCount=1)
+    file_handler.setFormatter(
+        FileFormatter(
+            "%(asctime)s %(name)s[%(lineno)d] - %(levelname)s: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
     )
-    ch_debug.setFormatter(formatter_debug)
-    ch_debug.setLevel(logging.WARNING)
+    stream_handler = StreamHandler(stream=sys.stdout)
+    stream_handler.setFormatter(
+        ColouredFormatter(
+            "%(asctime)s %(name)s[%(lineno)d] - %(levelname)s: %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    )
 
-    if level is not None:
-        log_level = level
+    log_queue = Queue()
+    queue_handler = LocalQueueHandler(log_queue)
 
-    ch.setLevel(log_level)
+    root_logger = logging.getLogger()
+    root_logger.setLevel(level)
+    root_logger.addHandler(queue_handler)
 
-    for logger in loggers:
-        logger.setLevel(log_level)
-        logger.addHandler(ch_debug)
+    listener = QueueListener(
+        log_queue, file_handler, stream_handler, respect_handler_level=True
+    )
+    listener.start()
 
 
 class _Default:
