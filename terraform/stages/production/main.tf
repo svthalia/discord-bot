@@ -21,6 +21,7 @@ module "discord_bot_common" {
   source = "../../modules/common"
   prefix = var.prefix
   stage  = var.stage
+  tags   = var.aws_tags
 }
 
 module "discord_bot_authentication" {
@@ -28,6 +29,7 @@ module "discord_bot_authentication" {
   prefix      = var.prefix
   stage       = var.stage
   domain_name = var.domain_name
+  tags        = var.aws_tags
 
   thalia_server_url    = var.thalia_server_url
   thalia_client_id     = var.thalia_auth_client_id
@@ -44,6 +46,7 @@ module "discord_bot_server" {
   source = "../../modules/bot"
   prefix = var.prefix
   stage  = var.stage
+  tags   = var.aws_tags
 
   thalia_server_url    = var.thalia_server_url
   thalia_client_id     = var.thalia_bot_client_id

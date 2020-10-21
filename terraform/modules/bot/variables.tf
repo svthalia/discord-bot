@@ -2,6 +2,10 @@ variable "stage" {
   type = string
 }
 
+variable "tags" {
+  type = map(string)
+}
+
 variable "prefix" {
   type = string
 }
@@ -41,4 +45,3 @@ variable "users_table_arn" {
 variable "domain_name" {
   type = string
 }
-

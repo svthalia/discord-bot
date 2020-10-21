@@ -28,4 +28,6 @@ module "users_table" {
       read_capacity   = 5
     }
   ]
+
+  tags = var.tags
 }

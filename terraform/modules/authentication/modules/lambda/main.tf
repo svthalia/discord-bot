@@ -54,4 +54,5 @@ module "lambda" {
   policy_statements = var.policy_statements
 
   environment_variables = var.environment_variables
+  tags                  = var.tags
 }
