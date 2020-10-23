@@ -58,3 +58,7 @@ variable "aws_profile" {
 variable "aws_region" {
   type = string
 }
+
+variable "aws_tags" {
+  type = map(string)
+}

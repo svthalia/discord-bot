@@ -4,6 +4,13 @@ aws_region = "eu-west-1"
 
 aws_profile = "thalia"
 
+aws_tags = {
+  "Category"    = "discord-bot",
+  "Owner"       = "technicie",
+  "Environment" = "production",
+  "Terraform"   = true
+}
+
 prefix = "discord-bot"
 
 stage = "production"

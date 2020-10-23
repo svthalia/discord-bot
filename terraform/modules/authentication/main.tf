@@ -4,6 +4,8 @@
 
 resource "aws_cloudwatch_log_group" "logs" {
   name = "${var.prefix}-auth-api"
+
+  tags = var.tags
 }
 
 module "api_gateway" {
@@ -43,6 +45,8 @@ module "api_gateway" {
       timeout_milliseconds   = 12000
     }
   }
+
+  tags = var.tags
 }
 
 ###########
@@ -76,6 +80,8 @@ module "acm" {
   domain_name               = var.domain_name
   zone_id                   = data.aws_route53_zone.this.id
   subject_alternative_names = ["${var.prefix}.${var.domain_name}"]
+
+  tags = var.tags
 }
 
 ##########
@@ -111,6 +117,8 @@ module "complete_auth_lambda" {
       resources = ["${var.users_table_arn}"]
     }
   }
+
+  tags = var.tags
 }
 
 module "start_auth_lambda" {
@@ -126,4 +134,6 @@ module "start_auth_lambda" {
     OAUTH_REDIRECT_URI   = "https://${var.prefix}.${var.domain_name}/complete-auth"
     DISCORD_GUILD_ID     = var.discord_guild_id
   }
+
+  tags = var.tags
 }

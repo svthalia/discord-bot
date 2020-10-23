@@ -43,6 +43,8 @@ module "vpc" {
   public_subnets = ["10.0.100.0/24"]
 
   enable_ipv6 = true
+
+  tags = var.tags
 }
 
 #######
@@ -99,6 +101,8 @@ module "ec2_role" {
   trusted_role_services = [
     "ec2.amazonaws.com"
   ]
+
+  tags = var.tags
 }
 
 ############
@@ -119,6 +123,8 @@ module "egress_security_group" {
   vpc_id      = module.vpc.vpc_id
 
   egress_rules = ["all-all"]
+
+  tags = var.tags
 }
 
 module "ssh_security_group" {
@@ -131,6 +137,8 @@ module "ssh_security_group" {
 
   ingress_cidr_blocks = ["${chomp(data.http.myip.body)}/32"]
   ingress_rules       = ["ssh-tcp"]
+
+  tags = var.tags
 }
 
 # module "http_security_group" {
@@ -157,6 +165,13 @@ module "ec2" {
   name           = "${var.prefix}-runner"
   ami            = data.aws_ami.amazon_linux_2.id
   instance_type  = "t4g.nano"
+
+  root_block_device = [
+    {
+      volume_type = "gp2"
+      volume_size = 2
+    }
+  ]
 
   user_data = <<-EOF
     #!/bin/bash -xe
@@ -202,4 +217,7 @@ module "ec2" {
     module.ssh_security_group.this_security_group_id
   ]
   iam_instance_profile = module.ec2_role.this_iam_instance_profile_name
+
+  tags        = var.tags
+  volume_tags = var.tags
 }
