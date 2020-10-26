@@ -17,7 +17,7 @@ class PurgeCog(commands.Cog, name="Purge command"):
         if 0 < amount <= 100:
             try:
                 deleted = await ctx.channel.purge(limit=amount + 1)
-                await ctx.channel.send("Deleted {} message(s)".format(len(deleted)))
+                await ctx.channel.send("Deleted {} message(s)".format(len(deleted)-1))
             except HTTPException:
                 await reply_and_delete(ctx, "Could not purge messages.")
         else:
