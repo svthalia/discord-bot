@@ -16,7 +16,7 @@ class PurgeCog(commands.Cog, name="Purge command"):
         help="Removes the amount of messages specified in the argument."
     )
     async def purge(self, ctx, amount: int):
-        if 0 < amount <= 100:
+        if 0 < amount < 100:
             try:
                 deleted = await ctx.channel.purge(limit=amount + 1)
                 await ctx.channel.send("Deleted {} message(s)".format(len(deleted)-1))
@@ -25,7 +25,7 @@ class PurgeCog(commands.Cog, name="Purge command"):
         else:
             await reply_and_delete(
                 ctx,
-                "The amount of messages must be more than 0 and less than or equal to 100.",
+                "The amount of messages must be more than 0 and less than or equal to 99.",
             )
 
 
