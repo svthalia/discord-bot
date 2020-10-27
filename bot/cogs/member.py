@@ -53,14 +53,16 @@ class MemberCog(commands.Cog, name="Member management"):
     async def connect(self, ctx):
         user_data = await get_user_by_discord_id(ctx.author.id)
 
+        if user_data:
+            await reply_and_delete(
+                ctx, "Your Discord tag has already been connected"
+            )
+            return
+
         await reply_and_delete(
             ctx,
             f"Visit {CONNECT_DOMAIN_NAME}?discord-user={ctx.author.id} to connect your Thalia account",
         )
-        if user_data:
-            await reply_and_delete(
-                ctx, "Note: Your Discord tag has already been connected"
-            )
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
