@@ -3,7 +3,7 @@ class RGB:
         self.red = red
         self.green = green
         self.blue = blue
-        self.rgb=(red, green, blue)
+        self.rgb = (red, green, blue)
 
 
 class CMYK:
@@ -12,7 +12,7 @@ class CMYK:
         self.magenta = magenta
         self.yellow = yellow
         self.key = key
-        self.cmyk=(cyan, magenta, yellow, key)
+        self.cmyk = (cyan, magenta, yellow, key)
 
 
 class Colour:
@@ -25,23 +25,8 @@ class Colour:
 
 class ThaliaColours:
     # from https://thalia.nu/members/styleguide/
-    BLACK = Colour(
-        "Black",
-        0x000000,
-        RGB(0, 0, 0),
-        CMYK(91, 79, 62, 92)
-    )
+    BLACK = Colour("Black", 0x000000, RGB(0, 0, 0), CMYK(91, 79, 62, 92))
 
-    WHITE = Colour(
-        "White",
-        0xFFFFFF,
-        RGB(255, 255, 255),
-        CMYK(0, 0, 0, 0)
-    )
+    WHITE = Colour("White", 0xFFFFFF, RGB(255, 255, 255), CMYK(0, 0, 0, 0))
 
-    MAGENTA = Colour(
-        "Magenta",
-        0xE62272,
-        RGB(230, 24, 114),
-        CMYK(0, 94, 21, 0)
-    )
+    MAGENTA = Colour("Magenta", 0xE62272, RGB(230, 24, 114), CMYK(0, 94, 21, 0))
