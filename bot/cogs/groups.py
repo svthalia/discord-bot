@@ -38,7 +38,7 @@ class GroupCog(commands.Cog, name="Group management"):
 
                     msg = Embed(
                         title=role.name,
-                        colour=ThaliaColours.MAGENTA.hexadecimal,
+                        colour=ThaliaColours.MAGENTA,
                         description="\n".join(
                             [member.display_name for member in role.members]
                         ),
