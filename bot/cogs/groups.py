@@ -5,6 +5,7 @@ from discord.ext import commands
 from common.bot_logger import get_logger
 from common.helper_functions import reply_and_delete
 from common.discord_helper import DISCORD_GUILD_ID, is_connected_or_dm
+from common.constants import ThaliaColours
 
 logger = get_logger(__name__)
 
@@ -37,7 +38,7 @@ class GroupCog(commands.Cog, name="Group management"):
 
                     msg = Embed(
                         title=role.name,
-                        colour=0xE62272,
+                        colour=ThaliaColours.MAGENTA.hexadecimal,
                         description="\n".join(
                             [member.display_name for member in role.members]
                         ),
