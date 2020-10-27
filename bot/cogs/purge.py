@@ -13,7 +13,7 @@ class PurgeCog(commands.Cog, name="Purge command"):
 
     @commands.has_permissions(manage_messages=True)
     @commands.command(
-        help="Removes the amount of messages specified in the argument. Usage: purge [#messages]"
+        help="Removes the amount of messages specified in the argument."
     )
     async def purge(self, ctx, amount: int):
         if 0 < amount <= 100:
