@@ -120,7 +120,7 @@ async def sync_members(members, membergroups, guild, prune=False):
             discord_user = await guild.fetch_member(member["discord"])
         roles = await _calculate_roles(member["roles"], discord_user, guild)
         if (
-            len(set(roles) - set(discord_user.roles) - set(non_syncable_guild_roles))
+            len((set(roles) ^ set(discord_user.roles)) - set(non_syncable_guild_roles))
             > 0
             or discord_user.display_name != member["display_name"][:32]
         ):
