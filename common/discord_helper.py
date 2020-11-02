@@ -4,6 +4,7 @@ import discord
 from discord import Client
 from discord.ext import commands
 
+from common.ddb import remove_user
 from common.bot_logger import get_logger
 from common.helper_functions import reply_and_delete
 
@@ -116,8 +117,16 @@ async def sync_members(members, membergroups, guild, prune=False):
     edits = []
     for member in filter(lambda x: x.get("discord"), members.values()):
         discord_user = guild.get_member(member["discord"])
+
         if not discord_user:
-            discord_user = await guild.fetch_member(member["discord"])
+            try:
+                discord_user = await guild.fetch_member(member["discord"])
+            except discord.errors.NotFound:
+
+                # This user is not a member of the guild, remove reference from database
+                await remove_user(member["pk"])
+                continue
+
         roles = await _calculate_roles(member["roles"], discord_user, guild)
         if (
             len((set(roles) ^ set(discord_user.roles)) - set(non_syncable_guild_roles))

@@ -54,9 +54,7 @@ class MemberCog(commands.Cog, name="Member management"):
         user_data = await get_user_by_discord_id(ctx.author.id)
 
         if user_data:
-            await reply_and_delete(
-                ctx, "Your Discord tag has already been connected"
-            )
+            await reply_and_delete(ctx, "Your Discord tag has already been connected")
             return
 
         await reply_and_delete(
