@@ -1,8 +1,13 @@
 import os
 import asyncio
+import base64
 import discord
 from discord import Client
 from discord.ext import commands
+
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
 
 from common.bot_logger import get_logger
 from common.helper_functions import reply_and_delete
@@ -20,6 +25,22 @@ async def get_client():
     client = Client()
     await client.login(DISCORD_BOT_TOKEN)
     return client
+
+
+def _get_fernet_key():
+    digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
+    digest.update(DISCORD_BOT_TOKEN.encode('utf-8'))
+    return base64.urlsafe_b64encode(digest.finalize())
+
+
+def get_user_token_from_id(user_id: int):
+    f = Fernet(_get_fernet_key())
+    return f.encrypt(f"{user_id}".encode('utf-8')).decode('utf-8')
+
+
+def get_user_id_from_token(token: str):
+    f = Fernet(_get_fernet_key())
+    return f.decrypt(f"{token}".encode('utf-8')).decode('utf-8')
 
 
 async def _edit_member(discord_user, **kwargs):

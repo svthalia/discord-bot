@@ -11,6 +11,7 @@ python-dotenv = "^0.14.0"
 authlib = "^0.14.3"
 httpx = "0.14.1"
 aioboto3 = "^8.0.5"
+cryptography = "^3.2.1"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

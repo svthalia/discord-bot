@@ -4,7 +4,7 @@ import asyncio
 from common.thalia_oauth import get_oauth2_client, TOKEN_URL
 from common.thalia_api import get_authenticated_member, get_membergroups
 from common.ddb import write_user
-from common.discord_helper import get_client, sync_members, DISCORD_GUILD_ID
+from common.discord_helper import get_client, sync_members, DISCORD_GUILD_ID, get_user_id_from_token
 from common.bot_logger import get_logger
 
 loop = asyncio.get_event_loop()
@@ -34,7 +34,8 @@ async def async_handle(event):
         try:
             discord_client = await get_client()
             guild = await discord_client.fetch_guild(DISCORD_GUILD_ID)
-            member = await guild.fetch_member(state["discord_user"])
+            discord_user = get_user_id_from_token(state["discord_user"])
+            member = await guild.fetch_member(discord_user)
             thalia_data["discord"] = state["discord_user"]
             membergroups = await get_membergroups(client)
 
