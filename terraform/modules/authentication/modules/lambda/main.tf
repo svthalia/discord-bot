@@ -23,11 +23,13 @@ module "lambda" {
       commands = [
         ":zip",
         "cd ${local.root_directory}",
-        "poetry export --format requirements.txt --without-hashes > ${local.root_directory}/authentication/${var.name}-lambda/requirements.txt",
-        "cd `mktemp -d`",
-        "python3 -m pip install --target=. -r ${local.root_directory}/authentication/${var.name}-lambda/requirements.txt",
-        "rm ${local.root_directory}/authentication/${var.name}-lambda/requirements.txt",
+        "mkdir ${local.root_directory}/python",
+        "poetry export --format requirements.txt --without-hashes > ${local.root_directory}/python/requirements.txt",
+        "cd ${local.root_directory}/python",
+        "docker run --rm -v $(pwd):/build -w /build lambci/lambda:build-python3.8 pip install -r requirements.txt -t .",
+        "rm requirements.txt",
         ":zip .",
+        "rm -rf ${local.root_directory}/python",
       ],
       patterns = [
         "!poetry.lock",

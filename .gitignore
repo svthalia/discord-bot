@@ -5,6 +5,7 @@ requirements.txt
 *.tfstate
 *.tfstate.backup
 builds/
+python/
 local.auto.tfvars
 .env
 .venv/
