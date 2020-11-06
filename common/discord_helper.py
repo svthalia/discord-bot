@@ -122,7 +122,6 @@ async def sync_members(members, membergroups, guild, prune=False):
             try:
                 discord_user = await guild.fetch_member(member["discord"])
             except discord.errors.NotFound:
-
                 # This user is not a member of the guild, remove reference from database
                 await remove_user(member["pk"])
                 continue
