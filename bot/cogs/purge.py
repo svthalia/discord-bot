@@ -12,14 +12,12 @@ class PurgeCog(commands.Cog, name="Purge command"):
         logger.info("Purge cog initialized")
 
     @commands.has_permissions(manage_messages=True)
-    @commands.command(
-        help="Removes the amount of messages specified in the argument."
-    )
+    @commands.command(help="Removes the amount of messages specified in the argument.")
     async def purge(self, ctx, amount: int):
         if 0 < amount <= 100:
             try:
                 deleted = await ctx.channel.purge(limit=amount + 1)
-                await ctx.channel.send("Deleted {} message(s)".format(len(deleted)-1))
+                await ctx.channel.send("Deleted {} message(s)".format(len(deleted) - 1))
             except HTTPException:
                 await reply_and_delete(ctx, "Could not purge messages.")
         else:

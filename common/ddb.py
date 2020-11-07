@@ -26,6 +26,14 @@ async def write_user(thalia_user_id: Union[str, int], discord_user_id: Union[str
         return response
 
 
+async def remove_user(thalia_user_id: int):
+    logger.info(f"Removing user {thalia_user_id} from DB.")
+    async with aioboto3.resource("dynamodb") as dynamodb:
+        users_table = await dynamodb.Table(USERS_TABLE)
+        await users_table.delete_item(Key={"thalia_user_id": str(thalia_user_id)})
+        return
+
+
 async def get_user_by_thalia_id(thalia_user_id: Union[str, int]) -> dict:
     async with aioboto3.resource("dynamodb") as dynamodb:
         users_table = await dynamodb.Table(USERS_TABLE)
