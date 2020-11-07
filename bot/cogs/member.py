@@ -2,6 +2,7 @@ import os
 
 from discord.ext import commands
 
+from common.discord_helper import get_user_token_from_id
 from common.bot_logger import get_logger
 from common.ddb import get_user_by_discord_id
 from common.thalia_api import get_member_by_id
@@ -57,15 +58,17 @@ class MemberCog(commands.Cog, name="Member management"):
             await reply_and_delete(ctx, "Your Discord tag has already been connected")
             return
 
+        token = get_user_token_from_id(ctx.author.id)
         await reply_and_delete(
             ctx,
-            f"Visit {CONNECT_DOMAIN_NAME}?discord-user={ctx.author.id} to connect your Thalia account",
+            f"Visit {CONNECT_DOMAIN_NAME}?discord-user={token} to connect your Thalia account",
         )
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
+        token = get_user_token_from_id(member.id)
         await member.send(
-            f"Welcome to the Thalia Discord! Visit {CONNECT_DOMAIN_NAME}?discord-user={member.id} to connect your Thalia account"
+            f"Welcome to the Thalia Discord! Visit {CONNECT_DOMAIN_NAME}?discord-user={token} to connect your Thalia account"
         )
 
 
