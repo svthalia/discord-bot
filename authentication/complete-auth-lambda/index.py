@@ -14,6 +14,7 @@ logger = get_logger(__name__)
 async def async_handle(event):
     try:
         state = get_event_state(event)
+        state["discord_user"] = get_user_id_from_token(state["discord_user"])
         client = get_oauth2_client()
 
         logger.debug(f"State info: {state}")
@@ -34,8 +35,7 @@ async def async_handle(event):
         try:
             discord_client = await get_client()
             guild = await discord_client.fetch_guild(DISCORD_GUILD_ID)
-            discord_user = get_user_id_from_token(state["discord_user"])
-            member = await guild.fetch_member(discord_user)
+            member = await guild.fetch_member(state["discord_user"])
             thalia_data["discord"] = state["discord_user"]
             membergroups = await get_membergroups(client)
 
