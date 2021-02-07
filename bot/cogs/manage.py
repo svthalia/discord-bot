@@ -18,7 +18,7 @@ class ManageCog(commands.Cog, name="Bot management"):
 
     @commands.group(name="manage", hidden=True, invoke_without_command=True)
     async def manage(self, ctx):
-        await ctx.send("No subcommand was found!")
+        await ctx.reply("No subcommand was found!")
         await ctx.send_help(self.manage)
 
     @manage.command(help="Toggle the Admin role for you or a mentioned user")
@@ -48,9 +48,9 @@ class ManageCog(commands.Cog, name="Bot management"):
         try:
             self.bot.load_extension(f"cogs.{cog}")
         except Exception as e:
-            await ctx.send(f"**`ERROR:`** {type(e).__name__} - {e}")
+            await ctx.reply(f"**`ERROR:`** {type(e).__name__} - {e}")
         else:
-            await ctx.send("**`SUCCESS`**")
+            await ctx.reply("**`SUCCESS`**")
 
     @manage.command(help="Unload a module from the cogs in the repository")
     @commands.is_owner()
@@ -60,9 +60,9 @@ class ManageCog(commands.Cog, name="Bot management"):
         try:
             self.bot.unload_extension(f"cogs.{cog}")
         except Exception as e:
-            await ctx.send(f"**`ERROR:`** {type(e).__name__} - {e}")
+            await ctx.reply(f"**`ERROR:`** {type(e).__name__} - {e}")
         else:
-            await ctx.send("**`SUCCESS`**")
+            await ctx.reply("**`SUCCESS`**")
 
     @manage.command(help="Reload a module from the cogs in the repository")
     @commands.is_owner()
@@ -73,9 +73,9 @@ class ManageCog(commands.Cog, name="Bot management"):
             self.bot.unload_extension(f"cogs.{cog}")
             self.bot.load_extension(f"cogs.{cog}")
         except Exception as e:
-            await ctx.send(f"**`ERROR:`** {type(e).__name__} - {e}")
+            await ctx.reply(f"**`ERROR:`** {type(e).__name__} - {e}")
         else:
-            await ctx.send("**`SUCCESS`**")
+            await ctx.reply("**`SUCCESS`**")
 
     @manage.command(help="git fetch && git reset --hard origin/master")
     @commands.is_owner()
@@ -90,9 +90,9 @@ class ManageCog(commands.Cog, name="Bot management"):
             )
             stdout, _ = await proc.communicate()
         except Exception as e:
-            await ctx.send(f"**`ERROR:`** {type(e).__name__} - {e}")
+            await ctx.reply(f"**`ERROR:`** {type(e).__name__} - {e}")
         else:
-            await ctx.send(f"Current git revision is {stdout.decode()}")
+            await ctx.reply(f"Current git revision is {stdout.decode()}")
 
     @manage.command(help="Closes the current version of the bot")
     @commands.is_owner()
@@ -100,9 +100,9 @@ class ManageCog(commands.Cog, name="Bot management"):
         try:
             await self.bot.close()
         except Exception as e:
-            await ctx.send(f"**`ERROR:`** {type(e).__name__} - {e}")
+            await ctx.reply(f"**`ERROR:`** {type(e).__name__} - {e}")
         else:
-            await ctx.send("**`SUCCESS`**")
+            await ctx.reply("**`SUCCESS`**")
 
     @manage.command(
         help="Announce something in a channel. The complete string after the channel name will be used as message. That includes newlines.",
