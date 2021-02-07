@@ -30,18 +30,18 @@ async def get_client():
 
 def _get_fernet_key():
     digest = hashes.Hash(hashes.SHA256(), backend=default_backend())
-    digest.update(DISCORD_BOT_TOKEN.encode('utf-8'))
+    digest.update(DISCORD_BOT_TOKEN.encode("utf-8"))
     return base64.urlsafe_b64encode(digest.finalize())
 
 
 def get_user_token_from_id(user_id: int):
     f = Fernet(_get_fernet_key())
-    return f.encrypt(f"{user_id}".encode('utf-8')).decode('utf-8')
+    return f.encrypt(f"{user_id}".encode("utf-8")).decode("utf-8")
 
 
 def get_user_id_from_token(token: str):
     f = Fernet(_get_fernet_key())
-    return f.decrypt(f"{token}".encode('utf-8')).decode('utf-8')
+    return f.decrypt(f"{token}".encode("utf-8")).decode("utf-8")
 
 
 async def _edit_member(discord_user, **kwargs):

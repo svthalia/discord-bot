@@ -4,7 +4,12 @@ import asyncio
 from common.thalia_oauth import get_oauth2_client, TOKEN_URL
 from common.thalia_api import get_authenticated_member, get_membergroups
 from common.ddb import write_user
-from common.discord_helper import get_client, sync_members, DISCORD_GUILD_ID, get_user_id_from_token
+from common.discord_helper import (
+    get_client,
+    sync_members,
+    DISCORD_GUILD_ID,
+    get_user_id_from_token,
+)
 from common.bot_logger import get_logger
 
 loop = asyncio.get_event_loop()
