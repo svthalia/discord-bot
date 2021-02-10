@@ -29,7 +29,7 @@ class ThaliaNightCog(commands.Cog, name=""):
         role_overwrites = thalia_night_category.overwrites.get(role)
 
         channels_available = (
-            now.weekday() == 2 and now.hour >= 19 or now.weekday() == 3 and now.hour > 4
+            now.weekday() == 2 and now.hour >= 19 or now.weekday() == 3 and now.hour < 5
         )
 
         if role_overwrites.view_channel != channels_available:
