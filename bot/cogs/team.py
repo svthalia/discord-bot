@@ -34,7 +34,7 @@ class Team:
         return self.__members
 
     def add_member(self, member: Member):
-        if member not in self.members:
+        if member not in self.__members:
             self.__members.append(member)
             self.__size += 1
 
