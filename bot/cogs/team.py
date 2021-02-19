@@ -289,9 +289,7 @@ class TeamCog(commands.Cog, name="Team commands"):
         if len(connected) < n:
             await reply_and_delete(
                 ctx,
-                "There are less than "
-                + str(n)
-                + " users connected to your voice channel.",
+                f"There are less than {n} users connected to your voice channel.",
             )
             return
 
