@@ -119,6 +119,7 @@ class TeamCog(commands.Cog, name="Team commands"):
                 )
 
     @team.command(help="Rename team using: !team rename [from] [to]")
+    @commands.has_permissions(administrator=True)
     async def rename(self, ctx, old: str, new: str):
         for t in self.teams:
             if t.name == old:
