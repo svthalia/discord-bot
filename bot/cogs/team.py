@@ -253,8 +253,9 @@ class TeamCog(commands.Cog, name="Team commands"):
     @commands.has_permissions(administrator=True)
     async def gather(self, ctx, vc: VoiceChannel):
         for team in self.teams:
-            for member in team.vc.members:
-                await member.move_to(vc)
+            if team.vc:
+                for member in team.vc.members:
+                    await member.move_to(vc)
         await reply_and_delete(ctx, "Successfully moved members")
 
     @team.group(
