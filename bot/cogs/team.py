@@ -235,7 +235,7 @@ class TeamCog(commands.Cog, name="Team commands"):
                 except errors.Forbidden:
                     await reply_and_delete(
                         ctx,
-                        "The bot needs permission to manage channels and move members",
+                        "The bot needs permission to manage channels.",
                     )
             for member in team.members:
                 if member.voice.channel == original_vc:
