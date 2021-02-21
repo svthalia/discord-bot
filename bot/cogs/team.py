@@ -79,7 +79,7 @@ class TeamCog(commands.Cog, name="Team commands"):
 
     @commands.group(name="team", invoke_without_command=True)
     async def team(self, ctx):
-        await reply_and_delete(ctx, "'team' needs a sub-command!")
+        await ctx.reply("No subcommand was found!")
         await ctx.send_help(self.team)
 
     @team.command(help="Create one or multiple team(s)")
@@ -90,10 +90,10 @@ class TeamCog(commands.Cog, name="Team commands"):
             for t in self.teams:
                 if t.name == name:
                     existing_t = True
-                    await reply_and_delete(ctx, "Team " + name + " already exists.")
+                    await ctx.send(f"Team {name} already exists.")
             if not existing_t:
                 self.teams.append(Team(name))
-                await reply_and_delete(ctx, "Team " + name + " was added!")
+                await ctx.send(f"Team {name} was added!")
 
     @team.command(help="Remove one or multiple team(s)")
     @commands.has_permissions(administrator=True)
@@ -107,15 +107,11 @@ class TeamCog(commands.Cog, name="Team commands"):
                         if t.vc:
                             await t.vc.delete()
                         self.teams.remove(t)
-                        await reply_and_delete(ctx, "Team " + name + " was removed.")
+                        await ctx.send(f"Team {name} was removed.")
                     except:
-                        await reply_and_delete(
-                            ctx, "Could not remove team " + name + "."
-                        )
+                        await ctx.send(f"Could not remove team {name}.")
             if not team_found:
-                await reply_and_delete(
-                    ctx, "Could not remove team " + name + ", does it exist?"
-                )
+                await ctx.send(f"Could not remove team {name}, does it exist?")
 
     @team.command(help="Rename a team")
     @commands.has_permissions(administrator=True)
@@ -123,15 +119,15 @@ class TeamCog(commands.Cog, name="Team commands"):
         for t in self.teams:
             if t.name == old:
                 t.name = new
+                await ctx.send("Team renamed successfully.")
                 return
-        await reply_and_delete(ctx, "Could not find team " + old)
+        await ctx.send(f"Could not find team {old}")
 
     @team.command(name="list", help="Show list of teams")
     async def list_teams(self, ctx):
-        t_list = ""
-        for t in self.teams:
-            t_list += t.name + ", "
-        await ctx.send(t_list[:-2])
+        if len(self.teams) == 0:
+            await ctx.send("No teams created yet.")
+        await ctx.send(", ".join([t.name for t in self.teams]))
 
     @team.command(help="Show members of one or multiple team(s)")
     async def show(self, ctx, *teams):
@@ -142,50 +138,45 @@ class TeamCog(commands.Cog, name="Team commands"):
                         names = ""
                         for m in t.members:
                             names += m.display_name + ", "
-                        await reply_and_delete(
-                            ctx, "Team " + team + " has members: " + names[:-2]
-                        )
+                        await ctx.send(f"{team} has members: {names[:-2]}.")
                     else:
-                        await reply_and_delete(ctx, "Team " + team + " is empty!")
+                        await ctx.send(f"{team} is empty!")
 
     @team.command(help="Add members to a team")
     @commands.has_permissions(administrator=True)
-    async def add_member(self, ctx, t_name: str, *members):
+    async def add_member(self, ctx, team_name: str, *members):
         members, not_found = get_member_list(ctx, members)
         if not_found != "":
-            await reply_and_delete(ctx, "Could not find member(s): " + not_found[:-2])
+            await ctx.send(f"Could not find member(s): {not_found[:-2]}.")
 
         for member in members:
             already_in_team = False
             team = None
-            for t in self.teams:
-                for m in t.members:
-                    if member.id == m.id:
-                        await reply_and_delete(
-                            ctx,
-                            member.display_name
-                            + " is already in team "
-                            + t.name
-                            + ", remove them first.",
+            for existing_team in self.teams:
+                for team_member in existing_team.members:
+                    if member.id == team_member.id:
+                        await ctx.send(
+                            f"{member.display_name} is already in {existing_team.name}, remove them first.",
                         )
                         already_in_team = True
-                if t.name == t_name:
-                    team = t
+                if existing_team.name == team_name:
+                    team = existing_team
             if not already_in_team:
                 if not team:
-                    await reply_and_delete(ctx, "Team " + t_name + " was not found.")
+                    await ctx.send(f"{team_name} was not found.")
                 else:
                     try:
                         team.add_member(member)
+                        await ctx.send("Successfully added member to team.")
                     except:
-                        await reply_and_delete(ctx, "Error while adding member.")
+                        await ctx.send("Error while adding member.")
 
     @team.command(help="Remove members from their team")
     @commands.has_permissions(administrator=True)
     async def remove_member(self, ctx, *members):
         members, not_found = get_member_list(ctx, members)
         if not_found != "":
-            await reply_and_delete(ctx, "Could not find member(s): " + not_found[:-2])
+            await ctx.send(f"Could not find member(s): {not_found[:-2]}")
         for member in members:
             removed = False
             for t in self.teams:
@@ -194,27 +185,16 @@ class TeamCog(commands.Cog, name="Team commands"):
                         try:
                             t.rem_member(member)
                             removed = True
-                            await reply_and_delete(
-                                ctx,
-                                member.display_name
-                                + " was successfully removed from team "
-                                + t.name
-                                + ".",
+                            await ctx.send(
+                                f"{member.display_name} was successfully removed from team {t.name}.",
                             )
                         except:
                             logger.error(
-                                "Could not remove "
-                                + member.display_name
-                                + " from "
-                                + t.name
+                                f"Could not remove {member.display_name} from {t.name}."
                             )
-                            await reply_and_delete(
-                                ctx, "Error in removing member from team."
-                            )
+                            await ctx.send("Error in removing member from team.")
             if not removed:
-                await reply_and_delete(
-                    ctx, member.display_name + " was not in any team."
-                )
+                await ctx.send(f"{member.display_name} was not in any team.")
 
     @team.command(help="Move all connected users to a voice channel per team")
     @commands.has_permissions(administrator=True)
@@ -248,7 +228,7 @@ class TeamCog(commands.Cog, name="Team commands"):
             if team.vc:
                 for member in team.vc.members:
                     await member.move_to(vc)
-        await ctx.send("Successfully moved members")
+        await ctx.send("Successfully moved members.")
 
     @team.command(name="import", help="Import a csv of users attached to the message")
     @commands.has_permissions(administrator=True)
@@ -281,7 +261,7 @@ class TeamCog(commands.Cog, name="Team commands"):
                 team.vc = None
         self.teams = []
 
-        await ctx.send("Team successfully reset.")
+        await ctx.send("Teams successfully reset.")
 
     @team.group(
         name="divide",
@@ -289,7 +269,7 @@ class TeamCog(commands.Cog, name="Team commands"):
         help="Get help for team divide commands",
     )
     async def divide(self, ctx):
-        await reply_and_delete(ctx, "'team divide' needs a sub-command!")
+        await ctx.reply("No subcommand was found!")
         await ctx.send_help(self.team.divide)
 
     @divide.command(help="Split current voice channel into `n` groups")
@@ -299,20 +279,19 @@ class TeamCog(commands.Cog, name="Team commands"):
         try:
             n = int(n)
         except:
-            await reply_and_delete(ctx, "Number of groups should be an integer value.")
+            await ctx.send("Number of groups should be an integer value.")
             return
 
         vc = ctx.author.voice.channel
         if not vc:
-            await reply_and_delete(
-                ctx, "You have to be connected to a voice channel to use this command."
+            await ctx.send(
+                "You have to be connected to a voice channel to use this command."
             )
             return
 
         connected = [m for m in vc.members if not m.bot]
         if len(connected) < n:
-            await reply_and_delete(
-                ctx,
+            await ctx.send(
                 f"There are less than {n} users connected to your voice channel.",
             )
             return
@@ -328,13 +307,17 @@ class TeamCog(commands.Cog, name="Team commands"):
             self.create_team(t, "Team " + str(i))
             i += 1
 
+        await ctx.send(
+            "Successfully created teams. You can now use the voice command to split everyone into voice channels."
+        )
+
     @divide.command(help="Split current voice channel into teams based on their role.")
     @commands.has_permissions(administrator=True)
     async def role(self, ctx, *roles):
         vc = ctx.author.voice.channel
         if not vc:
-            await reply_and_delete(
-                ctx, "You have to be connected to a voice channel to use this command."
+            await ctx.send(
+                "You have to be connected to a voice channel to use this command."
             )
             return
         connected = [m for m in vc.members if not m.bot]
@@ -353,7 +336,11 @@ class TeamCog(commands.Cog, name="Team commands"):
             self.create_team(t, roles[i].name)
             i += 1
 
-    @tasks.loop(minutes=1)
+        await ctx.send(
+            "Successfully created teams. You can now use the voice command to split everyone into voice channels."
+        )
+
+    @tasks.loop(minutes=5)
     async def clean_up_vc(self):
         for team in self.teams:
             if team.vc:
