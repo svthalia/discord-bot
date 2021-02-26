@@ -2,7 +2,7 @@ import os
 import asyncio
 import base64
 import discord
-from discord import Client
+from discord import Client, utils
 from discord.ext import commands
 
 from cryptography.fernet import Fernet
@@ -182,3 +182,23 @@ def is_connected_or_dm():
         return True
 
     return commands.check(predicate)
+
+
+def get_member_list(ctx, args):
+    members = []
+    not_found = ""
+    for arg in args:
+        member = ctx.guild.get_member_named(arg)
+        if member:
+            members.append(member)
+        else:
+            not_found += arg + ", "
+    return members, not_found
+
+
+async def string_to_role(ctx, name):
+    role = utils.get(ctx.guild.roles, name=name)
+    if not role:
+        await reply_and_delete(ctx, "Could not find role " + name)
+    else:
+        return role

@@ -77,6 +77,10 @@ async def on_command_error(ctx, error):
         await reply_and_delete(ctx, "That command does not exist.")
     elif isinstance(error, commands.DisabledCommand):
         await reply_and_delete(ctx, f"{ctx.command} has been disabled.")
+    if isinstance(error, commands.MemberNotFound):
+        await reply_and_delete(ctx, "Could not find that member in the server.")
+    if isinstance(error, commands.UserInputError):
+        await reply_and_delete(ctx, "Input error.\n" + ctx.command.help)
     else:
         logger.warning(
             "Ignoring exception in command %s:\n%s",
