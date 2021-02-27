@@ -15,8 +15,6 @@ class AutoModCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        print(message.content)
-
         for check, func in self.checks.items():
             if re.search(check, message.content) is not None:
                 await func(message)
