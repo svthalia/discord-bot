@@ -10,7 +10,8 @@ logger = get_logger(__name__)
 class AutoModCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.checks = {"discord\.gg\/[A-z]+": self.discord_invite}
+        self.checks = {"discord\.gg\/[0-z]+": self.discord_invite}
+        self.checks = {"discord\.com\/invite\/[0-z]+": self.discord_invite}
         logger.info("AutoMod cog initialised")
 
     @commands.Cog.listener()
