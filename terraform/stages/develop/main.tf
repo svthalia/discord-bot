@@ -1,8 +1,8 @@
 terraform {
   required_version = "0.13.2"
   backend "s3" {
-    bucket = "discord-bot-terraform"
-    key    = "develop.tfstate"
+    bucket = "thalia-terraform-state"
+    key    = "discord-bot/develop.tfstate"
     region = "eu-west-1"
   }
 }
