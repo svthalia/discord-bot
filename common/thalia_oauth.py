@@ -38,5 +38,5 @@ async def get_backend_oauth_client():
         code_challenge_method="S256",
         update_token=_update_token,
     )
-    await client.fetch_token(TOKEN_URL, grant_type="client_credentials")
+    token = await client.fetch_token(TOKEN_URL, grant_type="client_credentials")
     return client
