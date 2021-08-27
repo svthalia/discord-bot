@@ -25,6 +25,9 @@ class ThaliaNightCog(commands.Cog, name=""):
         guild = utils.get(self.bot.guilds, id=DISCORD_GUILD_ID)
         thalia_night_category = utils.get(guild.categories, name="Thalia Night")
 
+        if thalia_night_category is None:
+            return
+
         role = utils.get(guild.roles, name=DISCORD_CONNECTED_ROLE)
         role_overwrites = thalia_night_category.overwrites.get(role)
 
