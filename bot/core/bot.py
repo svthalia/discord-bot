@@ -7,7 +7,7 @@ from .help import ThaliaHelpCommand
 class ThaliaBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         intents = Intents.default()
-        intents.members = True # pylint: disable=assigning-non-slot
+        intents.members = True
         super().__init__(*args, intents=intents, **kwargs)
         self.thalia_client = None
         self.help_command = ThaliaHelpCommand()

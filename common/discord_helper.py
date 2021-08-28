@@ -60,14 +60,13 @@ def _calculate_member_roles(members, membergroups):
             }
 
     for membergroup in membergroups:
-        for group_membership in membergroup["members"]:
-            member_pk = group_membership["member"]["pk"]
-            if member_pk in members:
+        for group_member in membergroup["members"]:
+            if group_member["pk"] in members:
                 if membergroup["type"] == "committee":
-                    members[member_pk]["roles"].add("Committee Member")
+                    members[group_member["pk"]]["roles"].add("Committee Member")
                 elif membergroup["type"] == "society":
-                    members[member_pk]["roles"].add("Society Member")
-                members[member_pk]["roles"].add(membergroup["name"])
+                    members[group_member["pk"]]["roles"].add("Society Member")
+                members[group_member["pk"]]["roles"].add(membergroup["name"])
 
         if (
             membergroup["type"] == "committee"
@@ -152,12 +151,12 @@ async def sync_members(members, membergroups, guild, prune=False):
         if (
             len((set(roles) ^ set(discord_user.roles)) - set(non_syncable_guild_roles))
             > 0
-            or discord_user.display_name != member["profile"]["display_name"][:32]
+            or discord_user.display_name != member["display_name"][:32]
         ):
             edits.append(
                 _edit_member(
                     discord_user,
-                    nick=member["profile"]["display_name"][:32],
+                    nick=member["display_name"][:32],
                     roles=roles,
                     reason="Automatic sync",
                 )

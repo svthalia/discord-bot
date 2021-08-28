@@ -55,10 +55,9 @@ class SyncCog(commands.Cog, name="Syncing"):
 
     async def _do_api_calls(self):
         try:
-            members_result = await get_members(self.bot.thalia_client)
             members = {
                 member["pk"]: member
-                for member in members_result
+                for member in await get_members(self.bot.thalia_client)
             }
             membergroups = await get_membergroups(self.bot.thalia_client)
         except InvalidTokenError:
@@ -75,8 +74,7 @@ class SyncCog(commands.Cog, name="Syncing"):
         )
 
         for record in user_table:
-            pk = int(record["thalia_user_id"])
-            members[pk]["discord"] = int(
+            members[int(record["thalia_user_id"])]["discord"] = int(
                 record["discord_user_id"]
             )
 
