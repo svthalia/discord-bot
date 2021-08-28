@@ -1,7 +1,10 @@
 import os
+import math
+import asyncio
+from .helper_functions import gather_with_concurrency
 
 THALIA_SERVER_URL = os.getenv("THALIA_SERVER_URL")
-THALIA_API_URL = f"{THALIA_SERVER_URL}api/v1"
+THALIA_API_URL = f"{THALIA_SERVER_URL}api/v2"
 
 
 async def get_authenticated_member(client):
@@ -15,10 +18,40 @@ async def get_member_by_id(client, user_id):
 
 
 async def get_membergroups(client):
-    response = await client.get(f"{THALIA_API_URL}/activemembers/groups/")
-    return response.json()
+    groups = await _get_paginated_results(client, f"{THALIA_API_URL}/activemembers/groups/")
+    coros = [_get_individual_group(client, group["pk"]) for group in groups]
+    return await gather_with_concurrency(2, *coros)
 
 
 async def get_members(client):
-    response = await client.get(f"{THALIA_API_URL}/members/")
-    return response.json()
+    return await _get_paginated_results(client, f"{THALIA_API_URL}/members/")
+
+
+async def _get_paginated_results(client, url):
+    location = f"{url}?limit=100"
+
+    response = await client.get(location)
+    data = response.json()
+    results = data["results"]
+
+    if data["count"] > 100:
+        num = math.ceil(data["count"] / 100)
+
+        async def get_next(url, i):
+            response = await client.get(f"{url}?limit=100&offset={100*i}")
+            data = response.json()
+            return data["results"]
+
+        coros = [get_next(url, i) for i in range(1, num)]
+        more_results = await asyncio.gather(*coros)
+
+        results += [item for sublist in more_results for item in sublist]
+
+    return results
+
+
+async def _get_individual_group(client, pk):
+    response = await client.get(f"{THALIA_API_URL}/activemembers/groups/{pk}/")
+    data = response.json()
+    data["chair"] = next(filter(lambda x: x["chair"], data["members"]))["member"]
+    return data
