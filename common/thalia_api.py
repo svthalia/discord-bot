@@ -35,6 +35,11 @@ async def _get_paginated_results(client, url):
 
     response = await client.get(location)
     data = response.json()
+
+    if not "results" in data:
+        logger.info("No results in response: %s", data)
+        return []
+
     results = data["results"]
 
     if data["count"] > 100:
