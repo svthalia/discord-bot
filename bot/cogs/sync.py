@@ -73,6 +73,9 @@ class SyncCog(commands.Cog, name="Syncing"):
             [str(m) for m in members.keys()]
         )
 
+        if not user_table:
+            return
+
         for record in user_table:
             members[int(record["thalia_user_id"])]["discord"] = int(
                 record["discord_user_id"]
