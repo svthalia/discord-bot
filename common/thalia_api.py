@@ -2,6 +2,9 @@ import os
 import math
 import asyncio
 from .helper_functions import gather_with_concurrency
+from common.bot_logger import get_logger
+
+logger = get_logger(__name__)
 
 THALIA_SERVER_URL = os.getenv("THALIA_SERVER_URL")
 THALIA_API_URL = f"{THALIA_SERVER_URL}api/v2"
@@ -53,5 +56,11 @@ async def _get_paginated_results(client, url):
 async def _get_individual_group(client, pk):
     response = await client.get(f"{THALIA_API_URL}/activemembers/groups/{pk}/")
     data = response.json()
-    data["chair"] = next(filter(lambda x: x["chair"], data["members"]))["member"]
+    data["chair"] = None
+    try:
+        if data["members"]:
+            chair_membership = next(filter(lambda x: x["chair"], data["members"]))
+            data["chair"] = chair_membership["member"]
+    except StopIteration:
+        logger.info("No chair found for %s", data["name"])
     return data
