@@ -48,6 +48,9 @@ async def _get_paginated_results(client, url):
         async def get_next(url, i):
             response = await client.get(f"{url}?limit=100&offset={100*i}")
             data = response.json()
+            if not "results" in data:
+                logger.info("No results in response: %s", data)
+                return []
             return data["results"]
 
         coros = [get_next(url, i) for i in range(1, num)]
