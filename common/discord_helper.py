@@ -105,14 +105,17 @@ async def _calculate_roles(thalia_roles, member, guild):
     return discord_roles | keep_roles
 
 
-async def _prune_roles(guild):
+async def _prune_roles(guild, execute=False):
     remove_roles = [
         role
         for role in guild.roles
         if role.name not in EXCLUDES_ROLES and len(role.members) == 0
     ]
-    for role in remove_roles:
-        await role.delete()
+    if execute:
+        for role in remove_roles:
+            await role.delete()
+    else:
+        logger.warning(f"There are roles to be pruned: {remove_roles}")
 
 
 async def _prune_members(members, guild, non_syncable_guild_roles):

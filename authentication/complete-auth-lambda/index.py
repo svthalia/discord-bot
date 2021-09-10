@@ -51,6 +51,10 @@ async def async_handle(event):
             )
         except Exception as e:
             logger.exception("Error during Discord sync")
+            return {
+                "statusCode": 400,
+                "body": f"Error: {str(e)}",
+            }
 
         return {
             "statusCode": 302,
