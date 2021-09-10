@@ -27,7 +27,7 @@ class ThaliaNightCog(commands.Cog, name=""):
 
         role = utils.get(guild.roles, name=DISCORD_CONNECTED_ROLE)
         role_overwrites = thalia_night_category.overwrites.get(role)
-        
+
         if not role_overwrites:
             return
 

@@ -63,7 +63,10 @@ def _calculate_member_roles(members, membergroups):
 
     for membergroup in membergroups:
         for group_member in membergroup["members"]:
-            if group_member["pk"] in members:
+            if (
+                group_member["pk"] in members
+                and members[group_member["pk"]]["membership_type"]
+            ):
                 if membergroup["type"] == "committee":
                     members[group_member["pk"]]["roles"].add("Committee Member")
                 elif membergroup["type"] == "society":
@@ -74,12 +77,14 @@ def _calculate_member_roles(members, membergroups):
             membergroup["type"] == "committee"
             and membergroup["chair"]
             and membergroup["chair"]["pk"] in members
+            and members[membergroup["chair"]["pk"]]["membership_type"]
         ):
             members[membergroup["chair"]["pk"]]["roles"].add("Committee Chair")
         elif (
             membergroup["type"] == "society"
             and membergroup["chair"]
             and membergroup["chair"]["pk"] in members
+            and members[membergroup["chair"]["pk"]]["membership_type"]
         ):
             members[membergroup["chair"]["pk"]]["roles"].add("Society Chair")
 
