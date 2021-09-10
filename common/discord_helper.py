@@ -58,6 +58,8 @@ def _calculate_member_roles(members, membergroups):
                 "Connected",
                 members[member["pk"]]["membership_type"].capitalize(),
             }
+        else:
+            members[member["pk"]]["roles"] = {}
 
     for membergroup in membergroups:
         for group_member in membergroup["members"]:
