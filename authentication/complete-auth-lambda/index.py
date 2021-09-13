@@ -49,7 +49,7 @@ async def async_handle(event):
             await member.send(
                 f"Your account has been connected. Welcome to the Thalia Discord {thalia_data['display_name']}!"
             )
-        except Exception as e:
+        except Exception:
             logger.exception("Error during Discord sync")
             return {
                 "statusCode": 400,
