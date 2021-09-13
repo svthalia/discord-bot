@@ -60,5 +60,8 @@ async def _get_paginated_results(client, url):
 async def _get_individual_group(client, pk):
     response = await client.get(f"{THALIA_API_URL}/activemembers/groups/{pk}/")
     data = response.json()
-    data["chair"] = next(filter(lambda x: x["chair"], data["members"]))["member"]
+    try:
+        data["chair"] = next(filter(lambda x: x["chair"], data["members"]))["member"]
+    except StopIteration:
+        data["chair"] = None
     return data
