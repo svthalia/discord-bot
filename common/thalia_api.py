@@ -61,7 +61,7 @@ async def _get_individual_group(client, pk):
     response = await client.get(f"{THALIA_API_URL}/activemembers/groups/{pk}/")
     data = response.json()
     try:
-        data["chair"] = next(filter(lambda x: x["chair"], data["members"]))["member"]
+        data["chair"] = next(filter(lambda x: x.get("chair", False), data.get("members", []))).get("member")
     except StopIteration:
         data["chair"] = None
     return data
