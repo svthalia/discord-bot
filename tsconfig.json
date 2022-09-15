@@ -8,10 +8,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "types"],
-    "rootDirs": ["./src/authentication/complete", "./src/authentication/start", "./src/bot"],
-    "paths": {
-      "@common/*": ["./src/common/*"]
-    }
+    "rootDirs": ["./src/authentication/complete", "./src/authentication/start", "./src/bot", "./src/common"],
   },
   "include": ["./src/**/*"],
   "exclude": ["node_modules", "dist", "testing"],

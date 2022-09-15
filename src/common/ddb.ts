@@ -24,7 +24,7 @@ export const saveUser = async (thaliaUserId: string, discordUserId: string) => {
 
 export const getUserByThaliaId = async (thaliaUserId: string) => {
   try {
-    return dynamoDb.send(
+    const { Items } = await dynamoDb.send(
       new QueryCommand({
         TableName: USERS_TABLE,
         KeyConditionExpression: 'thalia_user_id = :v',
@@ -33,6 +33,7 @@ export const getUserByThaliaId = async (thaliaUserId: string) => {
         }
       })
     );
+    return Items[0] ? Items.length > 0 : undefined;
   } catch (e) {
     console.error(e);
   }
@@ -40,7 +41,7 @@ export const getUserByThaliaId = async (thaliaUserId: string) => {
 
 export const getUserByDiscordId = async (discordUserId: string) => {
   try {
-    return dynamoDb.send(
+    const { Items } = await dynamoDb.send(
       new QueryCommand({
         TableName: USERS_TABLE,
         IndexName: 'DiscordIndex',
@@ -50,6 +51,7 @@ export const getUserByDiscordId = async (discordUserId: string) => {
         }
       })
     );
+    return Items[0] ? Items.length > 0 : undefined;
   } catch (e) {
     console.error(e);
   }

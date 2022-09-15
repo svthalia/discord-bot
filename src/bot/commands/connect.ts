@@ -1,6 +1,6 @@
 import { SlashCommand, SlashCreator, CommandContext } from 'slash-create';
-import { getTokenFromUserId } from '@common/security';
-import { getUserByDiscordId } from '@common/ddb';
+import { getTokenFromUserId } from '../security';
+import { getUserByDiscordId } from '../ddb';
 
 export default class ConnectCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
