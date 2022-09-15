@@ -1,9 +1,9 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResult } from 'aws-lambda';
 import base64url from 'base64url';
-import { getUserIdFromToken } from './security';
+import { getUserIdFromToken } from './utils/security';
 import Undici from 'undici';
-import { getAuthenticatedMember } from './thalia_api';
-import { saveUser } from './ddb';
+import { getAuthenticatedMember } from './utils/thalia_api';
+import { saveUser } from './utils/ddb';
 // import { createClient, sendMessageToUser } from './discord';
 
 export const lambdaHandler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResult> => {
