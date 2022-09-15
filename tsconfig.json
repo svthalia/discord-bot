@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist",
+    "strict": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types", "types"],
+    "rootDirs": ["./src/authentication/complete", "./src/authentication/start", "./src/bot"],
+    "paths": {
+      "@common/*": ["./src/common/*"]
+    }
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "dist", "testing"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
+}

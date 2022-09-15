@@ -1,4 +1,4 @@
-Thalia Bot 
+Thalia Bot
 ----------
 
 [![Linting](https://img.shields.io/github/workflow/status/svthalia/discord-bot/Linting?style=flat-square)](https://github.com/svthalia/concrexit/actions)
@@ -10,11 +10,11 @@ This repository contains the source code for a Discord bot that connects the use
 
 The code exists of three parts:
 1. authentication
-    
+
    This part contains code for AWS Lambdas that allow a user to authenticate with the backend and attach their Discord user to their Thalia account. It will create a record in a DynamoDB connecting a Discord user id to a Thalia user id allowing us to identify our members.
 
 1. bot
-    
+
    This is the actual code for the bot, it is written using [discord.py](https://discordpy.readthedocs.io) and automatically loads cogs from the cogs module. These cogs can be used for functionalities like member syncing or other commands. The bot can use the DynamoDB instance from the authentication to identify members.
 
 2. common
@@ -52,7 +52,6 @@ _Note_: The environment variables in the `.env` file only work for the bot, the 
 ```
 DISCORD_BOT_TOKEN = "<generated-for-your-bot>"
 DISCORD_GUILD_ID = "430967226567809111"
-DISCORD_COMMAND_PREFIX = "!"
 DISCORD_EXCLUDED_ROLES = "Superadmin,Admin,Moderator,Thalia Bot,@everyone"
 
 USERS_TABLE = "discord-bot-develop-users"
