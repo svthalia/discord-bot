@@ -63,8 +63,8 @@ resource "aws_route53_record" "api" {
   type    = "A"
 
   alias {
-    name                   = module.api_gateway.this_apigatewayv2_domain_name_configuration.0.target_domain_name
-    zone_id                = module.api_gateway.this_apigatewayv2_domain_name_configuration.0.hosted_zone_id
+    name                   = module.api_gateway.apigatewayv2_domain_name_configuration.0.target_domain_name
+    zone_id                = module.api_gateway.apigatewayv2_domain_name_configuration.0.hosted_zone_id
     evaluate_target_health = false
   }
 }
@@ -92,7 +92,7 @@ module "complete_auth_lambda" {
   source          = "./modules/lambda"
   prefix          = var.prefix
   name            = "complete-auth"
-  api_gateway_arn = module.api_gateway.this_apigatewayv2_api_execution_arn
+  api_gateway_arn = module.api_gateway.apigatewayv2_api_execution_arn
 
   environment_variables = {
     THALIA_SERVER_URL      = var.thalia_server_url
@@ -125,7 +125,7 @@ module "start_auth_lambda" {
   source          = "./modules/lambda"
   prefix          = var.prefix
   name            = "start-auth"
-  api_gateway_arn = module.api_gateway.this_apigatewayv2_api_execution_arn
+  api_gateway_arn = module.api_gateway.apigatewayv2_api_execution_arn
 
   environment_variables = {
     THALIA_SERVER_URL    = var.thalia_server_url
