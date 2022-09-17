@@ -19,12 +19,12 @@ variable "tags" {
 }
 
 variable "api_gateway_arn" {
-  type = string
+  type    = string
   default = null
 }
 
 variable "schedule_expression" {
-  type = string
+  type    = string
   default = null
 }
 

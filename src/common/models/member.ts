@@ -12,3 +12,7 @@ export interface Member {
 export interface MemberWithDiscord extends Member {
   discord: string;
 }
+
+export interface MemberWithRoles extends MemberWithDiscord {
+  roles: string[];
+}

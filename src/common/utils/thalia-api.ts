@@ -61,7 +61,7 @@ const getIndividualGroup = async (token: string, id: string): Promise<MemberGrou
   const data = (await response.body.json()) as Omit<MemberGroupDetails, 'chair'>;
   return {
     ...data,
-    chair: (data.members || []).find((member) => member.chair)?.member.pk
+    chair: (data.members || []).find((member) => member.chair)?.member
   };
 };
 

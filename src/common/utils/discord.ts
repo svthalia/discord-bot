@@ -2,8 +2,8 @@ import { GatewayIntentBits, Snowflake } from 'discord-api-types/v10';
 import { Awaitable, Client, Collection, Guild, GuildMember, Role } from 'discord.js';
 import { settle } from './async';
 import { removeUserByThaliaId } from './ddb';
-import { Member } from '../models/member';
-import { MemberGroupDetails } from '../models/memberGroup';
+import { MemberWithDiscord, MemberWithRoles } from '../models/member';
+import { MemberGroupDetails, MemberGroupType } from '../models/memberGroup';
 
 const { DISCORD_BOT_TOKEN, DISCORD_EXCLUDED_ROLES } = process.env;
 const EXCLUDED_ROLES = DISCORD_EXCLUDED_ROLES.split(',');
@@ -20,45 +20,47 @@ export const sendMessageToUser = async (userId: string, message: string, client:
   await user.send(message);
 };
 
-const calculateMemberRoles = (members: Record<string, Member>, memberGroups: MemberGroupDetails[]) => {
-  for (const member of Object.values(members)) {
-    if (member['membership_type']) {
-      members[member['pk']]['roles'] = [
-        'Connected',
-        members[member['pk']]['membership_type']
-          .split(' ')
-          .map((word) => {
-            return word[0].toUpperCase() + word.substring(1);
-          })
-          .join(' ')
-      ];
-    } else {
-      members[member['pk']]['roles'] = [];
-    }
-  }
+const calculateMemberRoles = (
+  inputMembers: Record<string, MemberWithDiscord>,
+  memberGroups: MemberGroupDetails[]
+): Record<string, MemberWithRoles> => {
+  const members = Object.fromEntries(
+    Object.entries<MemberWithDiscord>(inputMembers).map(([pk, member]) => {
+      if (member.membership_type) {
+        member['roles'] = [
+          'Connected',
+          member.membership_type
+            .split(' ')
+            .map((word) => {
+              return word[0].toUpperCase() + word.substring(1);
+            })
+            .join(' ')
+        ];
+      } else {
+        member['roles'] = [];
+      }
+      return [pk, member as MemberWithRoles];
+    })
+  );
 
   for (const memberGroup of memberGroups) {
     for (const groupMembership of memberGroup['members']) {
       const memberPk = groupMembership.member.pk;
       if (memberPk in members && members[memberPk]['membership_type']) {
-        if (memberGroup['type'] == 'committee') {
-          members[memberPk]['roles'].push('Committee Member');
-        } else if (memberGroup['type'] == 'society') {
-          members[memberPk]['roles'].push('Society Member');
+        if (memberGroup.type == MemberGroupType.COMMITTEE) {
+          members[memberPk].roles.push('Committee Member');
+        } else if (memberGroup.type == MemberGroupType.SOCIETY) {
+          members[memberPk].roles.push('Society Member');
         }
-        members[memberPk]['roles'].push(memberGroup['name']);
+        members[memberPk].roles.push(memberGroup['name']);
       }
     }
 
-    if (
-      memberGroup['chair'] &&
-      memberGroup['chair']['pk'] in members &&
-      members[memberGroup['chair']['pk']]['membership_type']
-    ) {
-      if (memberGroup['type'] == 'committee') {
-        members[memberGroup['chair']['pk']]['roles'].push('Committee Chair');
-      } else if (memberGroup['type'] == 'society') {
-        members[memberGroup['chair']['pk']]['roles'].push('Society Chair');
+    if (memberGroup.chair && memberGroup.chair.pk in members && members[memberGroup.chair.pk].membership_type) {
+      if (memberGroup.type == MemberGroupType.COMMITTEE) {
+        members[memberGroup.chair.pk].roles.push('Committee Chair');
+      } else if (memberGroup.type == MemberGroupType.SOCIETY) {
+        members[memberGroup.chair.pk].roles.push('Society Chair');
       }
     }
   }
@@ -120,7 +122,7 @@ const pruneMembers = async (
 };
 
 export const syncMembers = async (
-  members: Record<string, Member>,
+  members: Record<string, MemberWithDiscord>,
   memberGroups: MemberGroupDetails[],
   guild: Guild,
   prune = false
@@ -129,15 +131,14 @@ export const syncMembers = async (
   const nonSyncableGuildRoles = guild.roles.cache.filter((role) => role.name in EXCLUDED_ROLES);
 
   const edits = [];
-  for (const member of Object.values(membersWithRoles).filter((value) => value['discord'])) {
+  for (const member of Object.values(membersWithRoles).filter((value) => value.discord)) {
     const discordMember =
-      guild.members.cache.find((member) => member.id == member['discord']) ??
-      (await guild.members.fetch(member['discord']));
+      guild.members.cache.find((x) => x.id == member.discord) ?? (await guild.members.fetch(member.discord));
     if (!discordMember) {
-      return removeUserByThaliaId(member['pk']);
+      return removeUserByThaliaId(member.pk);
     }
 
-    const roles = await syncRoles(member['roles'], discordMember, guild);
+    const roles = await syncRoles(member.roles, discordMember, guild);
     const displayName = member['profile']['display_name'].slice(0, 32);
     if (
       roles

@@ -1,13 +1,19 @@
 import { Member } from './member';
 
+export enum MemberGroupType {
+  SOCIETY = 'society',
+  COMMITTEE = 'committee',
+  BOARD = 'board'
+}
+
 export interface MemberGroup {
   pk: string;
   name: string;
-  type: 'society' | 'committee' | 'board';
+  type: MemberGroupType;
 }
 
 export interface MemberGroupDetails extends MemberGroup {
-  chair?: string;
+  chair?: Member;
   members: MemberGroupMember[];
 }
 

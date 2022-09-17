@@ -4,7 +4,7 @@ module "complete_auth_lambda" {
   name            = "complete-auth"
   path            = "authentication/complete"
   api_gateway_arn = module.api_gateway.apigatewayv2_api_execution_arn
-  timeout = 15
+  timeout         = 15
 
   environment_variables = {
     THALIA_SERVER_URL      = var.thalia_server_url
@@ -39,7 +39,7 @@ module "start_auth_lambda" {
   name            = "start-auth"
   path            = "authentication/start"
   api_gateway_arn = module.api_gateway.apigatewayv2_api_execution_arn
-  timeout = 30
+  timeout         = 30
 
   environment_variables = {
     THALIA_SERVER_URL    = var.thalia_server_url
@@ -59,7 +59,7 @@ module "event_lambda" {
   name            = "interaction-event"
   path            = "bot"
   api_gateway_arn = module.api_gateway.apigatewayv2_api_execution_arn
-  timeout = 60
+  timeout         = 60
 
   environment_variables = {
     THALIA_SERVER_URL      = var.thalia_server_url
@@ -97,11 +97,11 @@ module "event_lambda" {
 }
 
 module "sync_lambda" {
-  source          = "./modules/lambda"
-  prefix          = var.prefix
-  name            = "scheduled-sync"
-  path            = "scheduled/sync"
-  timeout = 60
+  source              = "./modules/lambda"
+  prefix              = var.prefix
+  name                = "scheduled-sync"
+  path                = "scheduled/sync"
+  timeout             = 60
   schedule_expression = "rate(15 minutes)"
 
   environment_variables = {
