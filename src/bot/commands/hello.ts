@@ -16,8 +16,9 @@ export default class HelloCommand extends SlashCommand {
   }
 
   async run(ctx: CommandContext) {
+    const name = ctx.member.displayName ?? ctx.user.username;
     return {
-      content: ctx.options.food ? `You like ${ctx.options.food}? Nice!` : `Hello, ${ctx.member.displayName}!`,
+      content: ctx.options.food ? `You like ${ctx.options.food}? Nice!` : `Hello, ${name}!`,
       ephemeral: true
     };
   }

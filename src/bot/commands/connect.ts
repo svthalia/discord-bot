@@ -12,14 +12,15 @@ export default class ConnectCommand extends SlashCommand {
 
   async run(ctx: CommandContext) {
     try {
-      const user = await getUserByDiscordId(ctx.member.id);
+      const discordUser = ctx.member ?? ctx.user;
+      const user = await getUserByDiscordId(discordUser.id);
       if (user) {
         return {
           content: 'Your account is already connected.',
           ephemeral: true
         };
       }
-      const token = getTokenFromUserId(ctx.member.id);
+      const token = getTokenFromUserId(discordUser.id);
       return {
         content: `Visit ${process.env.DOMAIN_NAME}?discord-user=${token} to connect your Thalia account`,
         ephemeral: true

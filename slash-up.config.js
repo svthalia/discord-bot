@@ -11,12 +11,7 @@ module.exports = {
   commandPath: './src/bot/commands',
   // You can use different environments with --env (-e)
   env: {
-    development: {
-      // The "globalToGuild" option makes global commands sync to the specified guild instead.
-      globalToGuild: process.env.DISCORD_GUILD_ID
-    },
-    production: {
-      globalToGuild: process.env.DISCORD_GUILD_ID
-    }
+    development: {},
+    production: {}
   }
 };
