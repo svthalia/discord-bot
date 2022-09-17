@@ -19,6 +19,14 @@ variable "discord_bot_token" {
   type = string
 }
 
+variable "discord_app_id" {
+  type = string
+}
+
+variable "discord_public_key" {
+  type = string
+}
+
 variable "discord_excluded_roles" {
   type = string
 }
@@ -35,11 +43,11 @@ variable "thalia_auth_client_secret" {
   type = string
 }
 
-variable "thalia_bot_client_id" {
+variable "thalia_backend_client_id" {
   type = string
 }
 
-variable "thalia_bot_client_secret" {
+variable "thalia_backend_client_secret" {
   type = string
 }
 

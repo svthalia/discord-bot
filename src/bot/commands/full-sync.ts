@@ -11,7 +11,7 @@ export default class FullSyncCommand extends SlashCommand {
   }
 
   async run(ctx: CommandContext) {
-    await ctx.defer(true);
+    await ctx.defer();
 
     await sync();
 
