@@ -11,7 +11,6 @@ const EXCLUDED_ROLES = DISCORD_EXCLUDED_ROLES.split(',');
 export const createClient = async (onReady?: (client: Client) => Awaitable<void>) => {
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
   client.once('ready', onReady ?? (() => {}));
-  console.log(DISCORD_BOT_TOKEN);
   await client.login(DISCORD_BOT_TOKEN);
   return client;
 };

@@ -10,12 +10,22 @@ variable "prefix" {
   type = string
 }
 
+variable "timeout" {
+  type = number
+}
+
 variable "tags" {
   type = map(string)
 }
 
 variable "api_gateway_arn" {
   type = string
+  default = null
+}
+
+variable "schedule_expression" {
+  type = string
+  default = null
 }
 
 variable "attach_policy_statements" {

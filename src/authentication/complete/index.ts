@@ -44,8 +44,6 @@ export const lambdaHandler = async (event: APIGatewayProxyEventV2): Promise<APIG
     discord: state['discord_user']
   };
 
-  console.log('Saving user', thaliaData);
-
   await saveUser(thaliaData['pk'].toString(), state['discord_user']);
 
   const discordClient = await createClient();

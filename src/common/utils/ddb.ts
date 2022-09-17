@@ -1,5 +1,5 @@
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DeleteCommand, DynamoDBDocumentClient, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
+import { DeleteCommand, DynamoDBDocumentClient, QueryCommand, ScanCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
 const { USERS_TABLE } = process.env;
 const ddbClient = new DynamoDBClient({});
@@ -68,4 +68,27 @@ export const removeUserByThaliaId = async (thaliaUserId: string) => {
   } catch (e) {
     console.error(e);
   }
+};
+
+export const getDiscordIdsByThaliaIds = async (thaliaIds: string[]) => {
+  let response = await dynamoDb.send(
+    new ScanCommand({
+      TableName: USERS_TABLE
+    })
+  );
+
+  let data = response['Items'];
+
+  while (response.LastEvaluatedKey) {
+    response = await dynamoDb.send(
+      new ScanCommand({
+        TableName: USERS_TABLE,
+        ExclusiveStartKey: response.LastEvaluatedKey
+      })
+    );
+
+    data = data.concat(response['Items']);
+  }
+
+  return data.filter((item) => item['thalia_user_id'] in thaliaIds);
 };

@@ -34,7 +34,8 @@ export const getBackendToken = async () => {
     },
     body: `grant_type=client_credentials&client_id=${THALIA_CLIENT_ID}&client_secret=${THALIA_CLIENT_SECRET}`
   });
-  return response.body.json();
+  const result = await response.body.json();
+  return result['access_token'];
 };
 
 export const getAuthenticatedMember = async (token: string) => {
