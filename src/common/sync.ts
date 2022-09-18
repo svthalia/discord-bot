@@ -38,7 +38,7 @@ export default async (memberId?: string) => {
 
   console.info(`Currently ${guild.memberCount} guild members`);
 
-  // await syncMembers(members, memberGroups, guild);
+  await syncMembers(members, memberGroups, guild);
 
   console.info('Sync complete');
 };
