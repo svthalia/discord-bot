@@ -8,7 +8,6 @@ export default async (memberId?: string) => {
   const accessToken = await getBackendToken();
 
   const remoteMembers = memberId ? [await getMember(accessToken, memberId)] : await getMembers(accessToken);
-  console.log(remoteMembers);
   const userPks = remoteMembers.map((member) => member.pk.toString());
 
   console.info(`Currently ${Object.keys(remoteMembers).length} members on the remote server`);

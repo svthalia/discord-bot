@@ -68,7 +68,7 @@ export const lambdaHandler = async (event: APIGatewayProxyEventV2): Promise<APIG
 const getState = (event: APIGatewayProxyEventV2) => {
   const stateKey = event.queryStringParameters['state'];
   const cookies = {};
-  for (const cookie of event.cookies) {
+  for (const cookie of event.cookies ?? []) {
     const values = cookie.split('=');
     cookies[values[0]] = values.slice(1).join('=');
   }

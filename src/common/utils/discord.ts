@@ -85,6 +85,7 @@ const syncRoles = async (thaliaRoles: string[], member: GuildMember, guild: Guil
   for (const roleName of thaliaRoles) {
     let discordRole = guild.roles.cache.find((value) => value.name == roleName);
     if (!discordRole) {
+      console.info(`Trying to create role ${roleName}`);
       discordRole = await guild.roles.create({ name: roleName });
     }
     discordRoles.set(discordRole.id, discordRole);
