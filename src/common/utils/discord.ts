@@ -143,33 +143,39 @@ export const syncMembers = async (
   const membersWithRoles = calculateMemberRoles(members, memberGroups);
   const nonSyncableGuildRoles = guild.roles.cache.filter((role) => EXCLUDED_ROLES.includes(role.name));
 
-  const edits = [];
-  for (const member of Object.values(membersWithRoles).filter((value) => value.discord)) {
-    const discordMember =
-      guild.members.cache.find((x) => x.id == member.discord) ??
-      (await guild.members.fetch(member.discord).catch((reason) => {
-        console.error(reason);
-        return undefined;
-      }));
-
-    const roles = await syncRoles(member.roles, discordMember, guild);
-    const displayName = member['profile']['display_name'].slice(0, 32);
-    if (
-      roles
-        .filter((role) => !!discordMember.roles.cache.find((memberRole) => role.id == memberRole.id))
-        .difference(nonSyncableGuildRoles).size > 0 ||
-      discordMember.displayName != displayName
-    ) {
-      edits.push(
-        discordMember.edit({
+  const edits = Object.values(membersWithRoles)
+    .filter((value) => value.discord)
+    .map(async (member) => {
+      const discordMember =
+        guild.members.cache.find((x) => x.id == member.discord) ??
+        (await guild.members.fetch(member.discord).catch((reason) => {
+          console.error(reason);
+          return undefined;
+        }));
+      await syncRoles(member.roles, discordMember, guild);
+      const roles = await syncRoles(member.roles, discordMember, guild);
+      console.info('Supported roles', roles);
+      const displayName = member['profile']['display_name'].slice(0, 32);
+      if (
+        roles.filter((role) => !discordMember.roles.cache.get(role.id) && !nonSyncableGuildRoles.get(role.id)).size >
+          0 ||
+        discordMember.displayName != displayName
+      ) {
+        console.info(
+          `User ${discordMember.id} has new roles`,
+          roles.filter((role) => !discordMember.roles.cache.get(role.id) && !nonSyncableGuildRoles.get(role.id))
+        );
+        return discordMember.edit({
           nick: displayName,
           roles,
           reason: 'Automatic sync'
-        })
-      );
-    }
-  }
-  await Promise.allSettled(edits);
+        });
+      }
+      return Promise.resolve();
+    });
+
+  const results = await Promise.allSettled(edits);
+  console.log(results);
 
   if (prune) {
     console.info('Starting member prune');
