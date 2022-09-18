@@ -32,7 +32,6 @@ export default async (memberId?: string) => {
       return acc;
     }, {});
 
-  console.log('Connecting to Discord');
   const discordClient = await createClient();
   const guild = await discordClient.guilds.fetch(process.env.DISCORD_GUILD_ID);
 

@@ -160,7 +160,6 @@ export const syncMembers = async (
       }
 
       const roles = await syncRoles(member.roles, discordMember, guild);
-      console.info('Supported roles', roles);
       const displayName = member['profile']['display_name'].slice(0, 32);
       if (
         roles.filter((role) => !discordMember.roles.cache.get(role.id) && !nonSyncableGuildRoles.get(role.id)).size > 0 ||
