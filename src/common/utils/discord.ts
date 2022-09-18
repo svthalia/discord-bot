@@ -91,7 +91,8 @@ const syncRoles = async (thaliaRoles: string[], member: GuildMember, guild: Guil
     discordRoles.set(discordRole.id, discordRole);
   }
 
-  const keepRoles = member.roles.cache.filter((role) => {
+  const currentMember = await member.fetch();
+  const keepRoles = currentMember.roles.cache.filter((role) => {
     return EXCLUDED_ROLES.includes(role.name);
   });
 
