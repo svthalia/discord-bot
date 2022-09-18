@@ -13,8 +13,8 @@ export default class ConnectCommand extends SlashCommand {
   async run(ctx: CommandContext) {
     try {
       const discordUser = ctx.member ?? ctx.user;
-      const user = await getUserByDiscordId(discordUser.id);
-      if (user) {
+      const thaliaUserId = await getUserByDiscordId(discordUser.id);
+      if (thaliaUserId) {
         return {
           content: 'Your account is already connected.',
           ephemeral: true

@@ -72,7 +72,7 @@ export const getPaginatedResult = async <T>(token: string, path: string): Promis
   if ('detail' in data && 'throttle' in data.detail) {
     return [];
   }
-  const results = data['results'];
+  const results = data['results'] as T[];
 
   if (data.count > 100) {
     const num = Math.ceil(data.count / 100);
@@ -84,8 +84,8 @@ export const getPaginatedResult = async <T>(token: string, path: string): Promis
       return data.results;
     };
 
-    const nexts = await settle<any>(Array.from(Array(num).keys()).map((x) => getNext(x + 1)));
-    nexts.forEach((next) => results.append(next));
+    const nexts = await settle<T[]>(Array.from(Array(num).keys()).map((x) => getNext(x + 1)));
+    nexts.forEach((next) => results.push(...next));
   }
 
   return results;

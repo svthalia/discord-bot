@@ -9,8 +9,8 @@ module "lambda" {
   function_name = "${var.prefix}-${var.name}"
   handler       = "index.lambdaHandler"
   runtime       = "nodejs16.x"
-  memory_size   = 256
-  timeout       = 30
+  memory_size   = var.memory
+  timeout       = var.timeout
 
   publish = true
 

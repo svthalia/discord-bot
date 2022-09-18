@@ -13,10 +13,12 @@ export default class FullSyncCommand extends SlashCommand {
   async run(ctx: CommandContext) {
     await ctx.defer();
 
-    await sync();
+    try {
+      await sync();
+    } catch (e) {
+      console.error(e);
+    }
 
     await ctx.editOriginal('Sync complete.');
-
-    return 'Sync complete.';
   }
 }

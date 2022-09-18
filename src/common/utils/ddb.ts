@@ -22,7 +22,7 @@ export const saveUser = async (thaliaUserId: string, discordUserId: string) => {
   }
 };
 
-export const getUserByThaliaId = async (thaliaUserId: string) => {
+export const getUserByThaliaId = async (thaliaUserId: string): Promise<string> => {
   try {
     const { Items } = await dynamoDb.send(
       new QueryCommand({
@@ -33,13 +33,13 @@ export const getUserByThaliaId = async (thaliaUserId: string) => {
         }
       })
     );
-    return Items[0] ? Items.length > 0 : undefined;
+    return Items[0]['discord_user_id'];
   } catch (e) {
     console.error(e);
   }
 };
 
-export const getUserByDiscordId = async (discordUserId: string) => {
+export const getUserByDiscordId = async (discordUserId: string): Promise<string> => {
   try {
     const { Items } = await dynamoDb.send(
       new QueryCommand({
@@ -51,18 +51,18 @@ export const getUserByDiscordId = async (discordUserId: string) => {
         }
       })
     );
-    return Items[0] ? Items.length > 0 : undefined;
+    return Items[0]['thalia_user_id'];
   } catch (e) {
     console.error(e);
   }
 };
 
-export const removeUserByThaliaId = async (thaliaUserId: string) => {
+export const removeUserByThaliaId = async (thaliaUserId: number) => {
   try {
     return dynamoDb.send(
       new DeleteCommand({
         TableName: USERS_TABLE,
-        Key: { thalia_user_id: thaliaUserId }
+        Key: { thalia_user_id: thaliaUserId.toString() }
       })
     );
   } catch (e) {
@@ -90,5 +90,12 @@ export const getDiscordIdsByThaliaIds = async (thaliaIds: string[]) => {
     data = data.concat(response['Items']);
   }
 
-  return data.filter((item) => item['thalia_user_id'] in thaliaIds);
+  return data
+    .filter((item) => {
+      return !!thaliaIds.find((value) => value.toString() === item['thalia_user_id'].toString());
+    })
+    .reduce<Record<string, string>>((acc, item) => {
+      acc[item['thalia_user_id']] = item['discord_user_id'];
+      return acc;
+    }, {});
 };

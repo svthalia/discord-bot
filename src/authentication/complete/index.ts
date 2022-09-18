@@ -5,7 +5,7 @@ import Undici from 'undici';
 import { getAuthenticatedMember, getMemberGroups } from './utils/thalia-api';
 import { saveUser } from './utils/ddb';
 import { createClient, sendMessageToUser, syncMembers } from './utils/discord';
-import { MemberWithDiscord } from '../../common/models/member';
+import { MemberWithDiscord } from './models/member';
 
 export const lambdaHandler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResult> => {
   const { DISCORD_GUILD_ID, OAUTH_REDIRECT_URI, THALIA_CLIENT_ID, THALIA_CLIENT_SECRET, THALIA_SERVER_URL } =
@@ -44,7 +44,7 @@ export const lambdaHandler = async (event: APIGatewayProxyEventV2): Promise<APIG
     discord: state['discord_user']
   };
 
-  await saveUser(thaliaData['pk'].toString(), state['discord_user']);
+  await saveUser(thaliaData.pk.toString(), state['discord_user']);
 
   const discordClient = await createClient();
   await sendMessageToUser(

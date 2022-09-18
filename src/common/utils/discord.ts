@@ -8,11 +8,22 @@ import { MemberGroupDetails, MemberGroupType } from '../models/memberGroup';
 const { DISCORD_BOT_TOKEN, DISCORD_EXCLUDED_ROLES } = process.env;
 const EXCLUDED_ROLES = DISCORD_EXCLUDED_ROLES.split(',');
 
-export const createClient = async (onReady?: (client: Client) => Awaitable<void>) => {
-  const client = new Client({ intents: [GatewayIntentBits.Guilds] });
-  client.once('ready', onReady ?? (() => {}));
-  await client.login(DISCORD_BOT_TOKEN);
-  return client;
+export const DISCORD_SUPERUSER_ROLE = 'Admin';
+export const DISCORD_CONNECTED_ROLE = 'Connected';
+
+export const createClient = async () => {
+  return new Promise<Client>((resolve, reject) => {
+    try {
+      const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+      client.once('ready', async () => {
+        console.info('Discord client ready.');
+        resolve(client);
+      });
+      client.login(DISCORD_BOT_TOKEN);
+    } catch (e) {
+      reject(e);
+    }
+  });
 };
 
 export const sendMessageToUser = async (userId: string, message: string, client: Client) => {
@@ -28,7 +39,7 @@ const calculateMemberRoles = (
     Object.entries<MemberWithDiscord>(inputMembers).map(([pk, member]) => {
       if (member.membership_type) {
         member['roles'] = [
-          'Connected',
+          DISCORD_CONNECTED_ROLE,
           member.membership_type
             .split(' ')
             .map((word) => {
@@ -80,7 +91,7 @@ const syncRoles = async (thaliaRoles: string[], member: GuildMember, guild: Guil
   }
 
   const keepRoles = member.roles.cache.filter((role) => {
-    return role.name in EXCLUDED_ROLES;
+    return EXCLUDED_ROLES.includes(role.name);
   });
 
   return discordRoles.concat(keepRoles);
@@ -88,7 +99,7 @@ const syncRoles = async (thaliaRoles: string[], member: GuildMember, guild: Guil
 
 const pruneRoles = (guild: Guild, execute = false) => {
   const removeRoles = guild.roles.cache.filter((role) => {
-    return !(role.name in EXCLUDED_ROLES) && role.members.size == 0;
+    return !EXCLUDED_ROLES.includes(role.name) && role.members.size == 0;
   });
 
   if (execute) {
@@ -106,7 +117,7 @@ const pruneMembers = async (
   const discordIds = Object.values(members)
     .map((x) => x.discord)
     .filter(Boolean);
-  const discordMembers = guild.members.cache.filter((x) => !(x.id in discordIds));
+  const discordMembers = guild.members.cache.filter((x) => !discordIds.includes(x.id));
   const edits = [];
   for (const member of discordMembers.values()) {
     if (member.roles.cache.filter((x) => !(x.name in nonSyncableRoles)).size > 0) {
@@ -128,15 +139,16 @@ export const syncMembers = async (
   prune = false
 ) => {
   const membersWithRoles = calculateMemberRoles(members, memberGroups);
-  const nonSyncableGuildRoles = guild.roles.cache.filter((role) => role.name in EXCLUDED_ROLES);
+  const nonSyncableGuildRoles = guild.roles.cache.filter((role) => EXCLUDED_ROLES.includes(role.name));
 
   const edits = [];
   for (const member of Object.values(membersWithRoles).filter((value) => value.discord)) {
     const discordMember =
-      guild.members.cache.find((x) => x.id == member.discord) ?? (await guild.members.fetch(member.discord));
-    if (!discordMember) {
-      return removeUserByThaliaId(member.pk);
-    }
+      guild.members.cache.find((x) => x.id == member.discord) ??
+      (await guild.members.fetch(member.discord).catch((reason) => {
+        console.error(reason);
+        return undefined;
+      }));
 
     const roles = await syncRoles(member.roles, discordMember, guild);
     const displayName = member['profile']['display_name'].slice(0, 32);

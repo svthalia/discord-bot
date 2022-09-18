@@ -7,7 +7,7 @@ export enum MemberGroupType {
 }
 
 export interface MemberGroup {
-  pk: string;
+  pk: number;
   name: string;
   type: MemberGroupType;
 }

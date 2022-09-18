@@ -1,5 +1,5 @@
 export interface Member {
-  pk: string;
+  pk: number;
   membership_type: 'member' | 'benefactor' | 'honorary member';
   profile: {
     display_name: string;

@@ -23,6 +23,12 @@ variable "api_gateway_arn" {
   default = null
 }
 
+variable "memory" {
+  type    = number
+  default = 256
+}
+
+
 variable "schedule_expression" {
   type    = string
   default = null
