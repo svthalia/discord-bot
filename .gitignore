@@ -1,17 +1,23 @@
-requirements.txt
-*.pyc
+# Packages
+node_modules/
+yarn.lock
+package_lock.json
 
+# Log files
+logs/
+*.log
+
+# Miscellaneous
+.tmp/
+.vscode/**/*
+!.vscode/extensions.json
+.env
+dist/
+
+# Terraform
 .terraform/
 *.lock.hcl
 *.tfstate
 *.tfstate.backup
-builds/
-python/
 local.auto.tfvars
-.env
-.venv/
-__pycache__
-.vscode/
-bot.egg-info/
-
-bot.log*
+builds/
