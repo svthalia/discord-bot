@@ -154,6 +154,11 @@ export const syncMembers = async (
           return undefined;
         }));
 
+      if (!discordMember) {
+        await removeUserByThaliaId(member.pk);
+        continue;
+      }
+
       const roles = await syncRoles(member.roles, discordMember, guild);
       console.info('Supported roles', roles);
       const displayName = member['profile']['display_name'].slice(0, 32);
