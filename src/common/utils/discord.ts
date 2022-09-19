@@ -125,7 +125,7 @@ const pruneMembers = async (
     if (member.roles.cache.filter((x) => !(x.name in nonSyncableRoles)).size > 0) {
       edits.push(
         member.edit({
-          roles: member.roles.cache.concat(nonSyncableRoles),
+          roles: member.roles.cache.intersect(nonSyncableRoles),
           reason: 'Automatic sync'
         })
       );
@@ -181,6 +181,7 @@ export const syncMembers = async (
       console.error(`Syncing member ${member.pk} failed`, e);
     }
   }
+
   await Promise.allSettled(edits);
 
   if (prune) {
